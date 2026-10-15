@@ -1,0 +1,76 @@
+timestamp,source,event_type,source_ip,destination_ip,source_port,destination_port,username,hostname,process,action,severity,raw_message,event_id
+2026-10-15 10:00:33,firewall,network_flow,192.168.1.25,192.168.1.10,56123,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2000
+2026-10-15 10:01:15,firewall,network_flow,192.168.1.25,192.168.1.10,49233,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2001
+2026-10-15 10:01:45,firewall,network_flow,192.168.1.25,192.168.1.10,49712,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2002
+2026-10-15 10:02:07,firewall,network_flow,192.168.1.25,192.168.1.10,65098,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2003
+2026-10-15 10:03:05,firewall,network_flow,192.168.1.25,192.168.1.10,63270,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2004
+2026-10-15 10:03:54,firewall,network_flow,192.168.1.25,192.168.1.10,59165,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2005
+2026-10-15 10:04:36,firewall,network_flow,192.168.1.25,192.168.1.10,64122,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2006
+2026-10-15 10:05:21,firewall,network_flow,192.168.1.25,192.168.1.10,49922,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2007
+2026-10-15 10:05:55,firewall,network_flow,192.168.1.25,192.168.1.10,65206,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2008
+2026-10-15 10:06:51,firewall,network_flow,192.168.1.25,192.168.1.10,60577,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2009
+2026-10-15 10:07:17,firewall,network_flow,192.168.1.25,192.168.1.10,52989,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2010
+2026-10-15 10:07:37,firewall,network_flow,192.168.1.25,192.168.1.10,53219,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2011
+2026-10-15 10:08:16,firewall,network_flow,192.168.1.25,192.168.1.10,50934,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2012
+2026-10-15 10:08:38,firewall,network_flow,192.168.1.25,192.168.1.10,55361,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2013
+2026-10-15 10:09:13,firewall,network_flow,192.168.1.25,192.168.1.10,61243,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.25 dst=192.168.1.10:443,PS-2014
+2026-10-15 10:15:00,firewall,port_scan_probe,192.168.1.50,192.168.1.10,46232,21,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:21,PS-2015
+2026-10-15 10:15:01,firewall,port_scan_probe,192.168.1.50,192.168.1.10,40284,22,,fw-core-01,kernel,allowed,medium,FIREWALL ALLOWED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:22,PS-2016
+2026-10-15 10:15:01,firewall,port_scan_probe,192.168.1.50,192.168.1.10,46049,23,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:23,PS-2017
+2026-10-15 10:15:02,firewall,port_scan_probe,192.168.1.50,192.168.1.10,41921,25,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:25,PS-2018
+2026-10-15 10:15:02,firewall,port_scan_probe,192.168.1.50,192.168.1.10,48681,53,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:53,PS-2019
+2026-10-15 10:15:03,firewall,port_scan_probe,192.168.1.50,192.168.1.10,44957,69,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:69,PS-2020
+2026-10-15 10:15:03,firewall,port_scan_probe,192.168.1.50,192.168.1.10,43319,80,,fw-core-01,kernel,allowed,medium,FIREWALL ALLOWED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:80,PS-2021
+2026-10-15 10:15:04,firewall,port_scan_probe,192.168.1.50,192.168.1.10,42160,88,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:88,PS-2022
+2026-10-15 10:15:04,firewall,port_scan_probe,192.168.1.50,192.168.1.10,45606,110,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:110,PS-2023
+2026-10-15 10:15:05,firewall,port_scan_probe,192.168.1.50,192.168.1.10,45855,111,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:111,PS-2024
+2026-10-15 10:15:05,firewall,port_scan_probe,192.168.1.50,192.168.1.10,42032,135,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:135,PS-2025
+2026-10-15 10:15:06,firewall,port_scan_probe,192.168.1.50,192.168.1.10,43754,139,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:139,PS-2026
+2026-10-15 10:15:06,firewall,port_scan_probe,192.168.1.50,192.168.1.10,45243,143,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:143,PS-2027
+2026-10-15 10:15:07,firewall,port_scan_probe,192.168.1.50,192.168.1.10,40650,389,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:389,PS-2028
+2026-10-15 10:15:07,firewall,port_scan_probe,192.168.1.50,192.168.1.10,40196,443,,fw-core-01,kernel,allowed,medium,FIREWALL ALLOWED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:443,PS-2029
+2026-10-15 10:15:08,firewall,port_scan_probe,192.168.1.50,192.168.1.10,46036,445,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:445,PS-2030
+2026-10-15 10:15:09,firewall,port_scan_probe,192.168.1.50,192.168.1.10,48678,465,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:465,PS-2031
+2026-10-15 10:15:10,firewall,port_scan_probe,192.168.1.50,192.168.1.10,45906,587,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:587,PS-2032
+2026-10-15 10:15:10,firewall,port_scan_probe,192.168.1.50,192.168.1.10,49637,993,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:993,PS-2033
+2026-10-15 10:15:11,firewall,port_scan_probe,192.168.1.50,192.168.1.10,47724,995,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:995,PS-2034
+2026-10-15 10:15:11,firewall,port_scan_probe,192.168.1.50,192.168.1.10,46543,1080,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:1080,PS-2035
+2026-10-15 10:15:12,firewall,port_scan_probe,192.168.1.50,192.168.1.10,44806,1433,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:1433,PS-2036
+2026-10-15 10:15:12,firewall,port_scan_probe,192.168.1.50,192.168.1.10,48787,1521,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:1521,PS-2037
+2026-10-15 10:15:13,firewall,port_scan_probe,192.168.1.50,192.168.1.10,47826,2049,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:2049,PS-2038
+2026-10-15 10:15:13,firewall,port_scan_probe,192.168.1.50,192.168.1.10,42425,3306,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:3306,PS-2039
+2026-10-15 10:15:14,firewall,port_scan_probe,192.168.1.50,192.168.1.10,45999,3389,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:3389,PS-2040
+2026-10-15 10:15:15,firewall,port_scan_probe,192.168.1.50,192.168.1.10,40617,5432,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:5432,PS-2041
+2026-10-15 10:15:15,firewall,port_scan_probe,192.168.1.50,192.168.1.10,46601,5900,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:5900,PS-2042
+2026-10-15 10:15:16,firewall,port_scan_probe,192.168.1.50,192.168.1.10,44099,6379,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:6379,PS-2043
+2026-10-15 10:15:16,firewall,port_scan_probe,192.168.1.50,192.168.1.10,49609,8000,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:8000,PS-2044
+2026-10-15 10:15:17,firewall,port_scan_probe,192.168.1.50,192.168.1.10,49623,8080,,fw-core-01,kernel,allowed,medium,FIREWALL ALLOWED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:8080,PS-2045
+2026-10-15 10:15:18,firewall,port_scan_probe,192.168.1.50,192.168.1.10,43678,8443,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:8443,PS-2046
+2026-10-15 10:15:18,firewall,port_scan_probe,192.168.1.50,192.168.1.10,45870,8888,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:8888,PS-2047
+2026-10-15 10:15:18,firewall,port_scan_probe,192.168.1.50,192.168.1.10,49934,9000,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:9000,PS-2048
+2026-10-15 10:15:19,firewall,port_scan_probe,192.168.1.50,192.168.1.10,46681,9200,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:9200,PS-2049
+2026-10-15 10:15:20,firewall,port_scan_probe,192.168.1.50,192.168.1.10,40635,9300,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:9300,PS-2050
+2026-10-15 10:15:20,firewall,port_scan_probe,192.168.1.50,192.168.1.10,48917,11211,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:11211,PS-2051
+2026-10-15 10:15:21,firewall,port_scan_probe,192.168.1.50,192.168.1.10,49922,27017,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:27017,PS-2052
+2026-10-15 10:15:21,firewall,port_scan_probe,192.168.1.50,192.168.1.10,40353,28017,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:28017,PS-2053
+2026-10-15 10:15:21,firewall,port_scan_probe,192.168.1.50,192.168.1.10,49686,50000,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:50000,PS-2054
+2026-10-15 10:15:22,firewall,port_scan_probe,192.168.1.50,192.168.1.10,44677,50001,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:50001,PS-2055
+2026-10-15 10:15:22,firewall,port_scan_probe,192.168.1.50,192.168.1.10,42002,50002,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:50002,PS-2056
+2026-10-15 10:15:23,firewall,port_scan_probe,192.168.1.50,192.168.1.10,49804,50003,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:50003,PS-2057
+2026-10-15 10:15:24,firewall,port_scan_probe,192.168.1.50,192.168.1.10,43913,50004,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:50004,PS-2058
+2026-10-15 10:15:24,firewall,port_scan_probe,192.168.1.50,192.168.1.10,48968,50005,,fw-core-01,kernel,blocked,low,FIREWALL BLOCKED: SYN probe proto=TCP src=192.168.1.50 dst=192.168.1.10:50005,PS-2059
+2026-10-15 10:16:09,firewall,network_flow,192.168.1.30,192.168.1.10,56752,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2060
+2026-10-15 10:17:03,firewall,network_flow,192.168.1.30,192.168.1.10,54060,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2061
+2026-10-15 10:18:03,firewall,network_flow,192.168.1.30,192.168.1.10,52455,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2062
+2026-10-15 10:19:07,firewall,network_flow,192.168.1.30,192.168.1.10,52029,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2063
+2026-10-15 10:20:22,firewall,network_flow,192.168.1.30,192.168.1.10,59983,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2064
+2026-10-15 10:21:24,firewall,network_flow,192.168.1.30,192.168.1.10,53284,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2065
+2026-10-15 10:22:22,firewall,network_flow,192.168.1.30,192.168.1.10,58003,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2066
+2026-10-15 10:23:07,firewall,network_flow,192.168.1.30,192.168.1.10,61690,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2067
+2026-10-15 10:24:16,firewall,network_flow,192.168.1.30,192.168.1.10,64175,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2068
+2026-10-15 10:25:03,firewall,network_flow,192.168.1.30,192.168.1.10,59094,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2069
+2026-10-15 10:25:36,firewall,network_flow,192.168.1.30,192.168.1.10,51250,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2070
+2026-10-15 10:26:37,firewall,network_flow,192.168.1.30,192.168.1.10,49246,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2071
+2026-10-15 10:27:57,firewall,network_flow,192.168.1.30,192.168.1.10,61695,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2072
+2026-10-15 10:29:02,firewall,network_flow,192.168.1.30,192.168.1.10,53441,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2073
+2026-10-15 10:30:06,firewall,network_flow,192.168.1.30,192.168.1.10,64829,80,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.30 dst=192.168.1.10:80,PS-2074

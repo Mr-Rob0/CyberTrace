@@ -1,0 +1,179 @@
+timestamp,source,event_type,source_ip,destination_ip,source_port,destination_port,username,hostname,process,action,severity,raw_message,event_id
+2026-10-16 08:01:43,auth.log,routine_access,192.168.1.15,192.168.1.99,50226,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6000
+2026-10-16 08:02:30,auth.log,routine_access,192.168.1.15,192.168.1.99,54184,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6001
+2026-10-16 08:03:22,syslog,routine_access,192.168.1.53,192.168.1.25,44380,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6002
+2026-10-16 08:04:10,syslog,routine_access,192.168.1.52,192.168.1.12,45742,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6003
+2026-10-16 08:05:37,syslog,routine_access,192.168.1.53,192.168.1.25,40191,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6004
+2026-10-16 08:06:21,syslog,routine_access,192.168.1.53,192.168.1.25,49872,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6005
+2026-10-16 08:07:35,syslog,routine_access,192.168.1.53,192.168.1.25,42795,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6006
+2026-10-16 08:09:06,syslog,routine_access,192.168.1.52,192.168.1.12,41506,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6007
+2026-10-16 08:10:00,syslog,routine_access,192.168.1.10,192.168.1.12,51621,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Normal service connection from 192.168.1.10 to 192.168.1.12:9100 (node_exporter),CA-6008
+2026-10-16 08:10:44,auth.log,routine_access,192.168.1.51,192.168.1.14,47031,22,dev_user1,srv-git-01,git,success,low,Normal service connection from 192.168.1.51 to 192.168.1.14:22 (git),CA-6009
+2026-10-16 08:12:17,syslog,routine_access,192.168.1.10,192.168.1.12,40666,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Normal service connection from 192.168.1.10 to 192.168.1.12:9100 (node_exporter),CA-6010
+2026-10-16 08:13:07,auth.log,routine_access,192.168.1.15,192.168.1.99,50904,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6011
+2026-10-16 08:13:48,auth.log,routine_access,192.168.1.15,192.168.1.99,40426,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6012
+2026-10-16 08:15:36,syslog,routine_access,192.168.1.52,192.168.1.12,52131,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6013
+2026-10-16 08:17:18,syslog,routine_access,192.168.1.10,192.168.1.12,58112,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Normal service connection from 192.168.1.10 to 192.168.1.12:9100 (node_exporter),CA-6014
+2026-10-16 08:18:00,syslog,routine_access,192.168.1.53,192.168.1.25,57983,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6015
+2026-10-16 08:18:43,syslog,routine_access,192.168.1.10,192.168.1.12,57609,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Normal service connection from 192.168.1.10 to 192.168.1.12:9100 (node_exporter),CA-6016
+2026-10-16 08:20:03,auth.log,routine_access,192.168.1.15,192.168.1.99,44121,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6017
+2026-10-16 08:21:38,auth.log,routine_access,192.168.1.15,192.168.1.99,45088,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6018
+2026-10-16 08:23:24,syslog,routine_access,192.168.1.53,192.168.1.25,41824,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6019
+2026-10-16 08:24:21,syslog,routine_access,192.168.1.53,192.168.1.25,44301,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6020
+2026-10-16 08:25:36,auth.log,routine_access,192.168.1.15,192.168.1.99,58528,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6021
+2026-10-16 08:27:21,syslog,routine_access,192.168.1.52,192.168.1.12,48820,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6022
+2026-10-16 08:28:56,auth.log,routine_access,192.168.1.51,192.168.1.14,58721,22,dev_user1,srv-git-01,git,success,low,Normal service connection from 192.168.1.51 to 192.168.1.14:22 (git),CA-6023
+2026-10-16 08:30:43,syslog,routine_access,192.168.1.52,192.168.1.12,40457,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6024
+2026-10-16 08:31:37,syslog,routine_access,192.168.1.52,192.168.1.12,57803,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6025
+2026-10-16 08:33:08,auth.log,routine_access,192.168.1.51,192.168.1.14,40118,22,dev_user1,srv-git-01,git,success,low,Normal service connection from 192.168.1.51 to 192.168.1.14:22 (git),CA-6026
+2026-10-16 08:34:23,syslog,routine_access,192.168.1.52,192.168.1.12,53270,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6027
+2026-10-16 08:35:58,syslog,routine_access,192.168.1.53,192.168.1.25,54706,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6028
+2026-10-16 08:36:39,syslog,routine_access,192.168.1.52,192.168.1.12,41652,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6029
+2026-10-16 08:38:06,syslog,routine_access,192.168.1.52,192.168.1.12,50144,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6030
+2026-10-16 08:39:18,auth.log,routine_access,192.168.1.51,192.168.1.14,47794,22,dev_user1,srv-git-01,git,success,low,Normal service connection from 192.168.1.51 to 192.168.1.14:22 (git),CA-6031
+2026-10-16 08:40:45,syslog,routine_access,192.168.1.53,192.168.1.25,40873,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6032
+2026-10-16 08:41:33,syslog,routine_access,192.168.1.10,192.168.1.12,55967,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Normal service connection from 192.168.1.10 to 192.168.1.12:9100 (node_exporter),CA-6033
+2026-10-16 08:43:21,syslog,routine_access,192.168.1.52,192.168.1.12,59816,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6034
+2026-10-16 08:44:10,auth.log,routine_access,192.168.1.15,192.168.1.99,45661,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6035
+2026-10-16 08:45:40,syslog,routine_access,192.168.1.10,192.168.1.12,51342,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Normal service connection from 192.168.1.10 to 192.168.1.12:9100 (node_exporter),CA-6036
+2026-10-16 08:47:18,syslog,routine_access,192.168.1.52,192.168.1.12,57981,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6037
+2026-10-16 08:48:30,auth.log,routine_access,192.168.1.51,192.168.1.14,47820,22,dev_user1,srv-git-01,git,success,low,Normal service connection from 192.168.1.51 to 192.168.1.14:22 (git),CA-6038
+2026-10-16 08:49:29,auth.log,routine_access,192.168.1.51,192.168.1.14,55826,22,dev_user1,srv-git-01,git,success,low,Normal service connection from 192.168.1.51 to 192.168.1.14:22 (git),CA-6039
+2026-10-16 08:50:51,auth.log,routine_access,192.168.1.51,192.168.1.14,51731,22,dev_user1,srv-git-01,git,success,low,Normal service connection from 192.168.1.51 to 192.168.1.14:22 (git),CA-6040
+2026-10-16 08:52:39,syslog,routine_access,192.168.1.52,192.168.1.12,45814,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6041
+2026-10-16 08:53:19,syslog,routine_access,192.168.1.53,192.168.1.25,53201,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6042
+2026-10-16 08:54:58,auth.log,routine_access,192.168.1.15,192.168.1.99,54235,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6043
+2026-10-16 08:56:22,syslog,routine_access,192.168.1.10,192.168.1.12,47529,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Normal service connection from 192.168.1.10 to 192.168.1.12:9100 (node_exporter),CA-6044
+2026-10-16 08:57:21,auth.log,routine_access,192.168.1.15,192.168.1.99,41081,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6045
+2026-10-16 08:58:16,syslog,routine_access,192.168.1.52,192.168.1.12,55642,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal service connection from 192.168.1.52 to 192.168.1.12:80 (nginx),CA-6046
+2026-10-16 08:59:45,auth.log,routine_access,192.168.1.15,192.168.1.99,47744,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6047
+2026-10-16 09:01:14,syslog,routine_access,192.168.1.53,192.168.1.25,53448,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal service connection from 192.168.1.53 to 192.168.1.25:445 (smbd),CA-6048
+2026-10-16 09:02:47,auth.log,routine_access,192.168.1.15,192.168.1.99,55047,22,backup_svc,srv-backup,rsync,success,low,Normal service connection from 192.168.1.15 to 192.168.1.99:22 (rsync),CA-6049
+2026-10-16 09:10:07,auth.log,login_failed,192.168.1.188,192.168.1.12,41000,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41000 ssh2,CA-6050
+2026-10-16 09:10:08,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6051
+2026-10-16 09:10:14,auth.log,login_failed,192.168.1.188,192.168.1.12,41001,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41001 ssh2,CA-6052
+2026-10-16 09:10:18,auth.log,login_failed,192.168.1.188,192.168.1.12,41002,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41002 ssh2,CA-6053
+2026-10-16 09:10:26,auth.log,login_failed,192.168.1.188,192.168.1.12,41003,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41003 ssh2,CA-6054
+2026-10-16 09:10:27,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6055
+2026-10-16 09:10:32,auth.log,login_failed,192.168.1.188,192.168.1.12,41004,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41004 ssh2,CA-6056
+2026-10-16 09:10:40,auth.log,login_failed,192.168.1.188,192.168.1.12,41005,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41005 ssh2,CA-6057
+2026-10-16 09:10:45,auth.log,login_failed,192.168.1.188,192.168.1.12,41006,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41006 ssh2,CA-6058
+2026-10-16 09:10:46,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6059
+2026-10-16 09:10:51,auth.log,login_failed,192.168.1.188,192.168.1.12,41007,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41007 ssh2,CA-6060
+2026-10-16 09:10:56,auth.log,login_failed,192.168.1.188,192.168.1.12,41008,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41008 ssh2,CA-6061
+2026-10-16 09:11:02,auth.log,login_failed,192.168.1.188,192.168.1.12,41009,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41009 ssh2,CA-6062
+2026-10-16 09:11:03,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6063
+2026-10-16 09:11:11,auth.log,login_failed,192.168.1.188,192.168.1.12,41010,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41010 ssh2,CA-6064
+2026-10-16 09:11:20,auth.log,login_failed,192.168.1.188,192.168.1.12,41011,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41011 ssh2,CA-6065
+2026-10-16 09:11:29,auth.log,login_failed,192.168.1.188,192.168.1.12,41012,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41012 ssh2,CA-6066
+2026-10-16 09:11:30,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6067
+2026-10-16 09:11:38,auth.log,login_failed,192.168.1.188,192.168.1.12,41013,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41013 ssh2,CA-6068
+2026-10-16 09:11:42,auth.log,login_failed,192.168.1.188,192.168.1.12,41014,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41014 ssh2,CA-6069
+2026-10-16 09:11:51,auth.log,login_failed,192.168.1.188,192.168.1.12,41015,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41015 ssh2,CA-6070
+2026-10-16 09:11:52,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6071
+2026-10-16 09:11:57,auth.log,login_failed,192.168.1.188,192.168.1.12,41016,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41016 ssh2,CA-6072
+2026-10-16 09:12:01,auth.log,login_failed,192.168.1.188,192.168.1.12,41017,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41017 ssh2,CA-6073
+2026-10-16 09:12:10,auth.log,login_failed,192.168.1.188,192.168.1.12,41018,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41018 ssh2,CA-6074
+2026-10-16 09:12:11,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6075
+2026-10-16 09:12:17,auth.log,login_failed,192.168.1.188,192.168.1.12,41019,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41019 ssh2,CA-6076
+2026-10-16 09:12:23,auth.log,login_failed,192.168.1.188,192.168.1.12,41020,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41020 ssh2,CA-6077
+2026-10-16 09:12:29,auth.log,login_failed,192.168.1.188,192.168.1.12,41021,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41021 ssh2,CA-6078
+2026-10-16 09:12:30,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6079
+2026-10-16 09:12:38,auth.log,login_failed,192.168.1.188,192.168.1.12,41022,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41022 ssh2,CA-6080
+2026-10-16 09:12:44,auth.log,login_failed,192.168.1.188,192.168.1.12,41023,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41023 ssh2,CA-6081
+2026-10-16 09:12:53,auth.log,login_failed,192.168.1.188,192.168.1.12,41024,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41024 ssh2,CA-6082
+2026-10-16 09:12:54,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6083
+2026-10-16 09:13:00,auth.log,login_failed,192.168.1.188,192.168.1.12,41025,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41025 ssh2,CA-6084
+2026-10-16 09:13:04,auth.log,login_failed,192.168.1.188,192.168.1.12,41026,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41026 ssh2,CA-6085
+2026-10-16 09:13:08,auth.log,login_failed,192.168.1.188,192.168.1.12,41027,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41027 ssh2,CA-6086
+2026-10-16 09:13:09,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6087
+2026-10-16 09:13:12,auth.log,login_failed,192.168.1.188,192.168.1.12,41028,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41028 ssh2,CA-6088
+2026-10-16 09:13:16,auth.log,login_failed,192.168.1.188,192.168.1.12,41029,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41029 ssh2,CA-6089
+2026-10-16 09:13:23,auth.log,login_failed,192.168.1.188,192.168.1.12,41030,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41030 ssh2,CA-6090
+2026-10-16 09:13:24,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6091
+2026-10-16 09:13:27,auth.log,login_failed,192.168.1.188,192.168.1.12,41031,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41031 ssh2,CA-6092
+2026-10-16 09:13:36,auth.log,login_failed,192.168.1.188,192.168.1.12,41032,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41032 ssh2,CA-6093
+2026-10-16 09:13:40,auth.log,login_failed,192.168.1.188,192.168.1.12,41033,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41033 ssh2,CA-6094
+2026-10-16 09:13:41,firewall,network_flow,192.168.1.52,192.168.1.12,52340,80,qa_tester,fw-core-01,nginx,allowed,low,FIREWALL PASS: HTTP GET /index.html 200 OK,CA-6095
+2026-10-16 09:13:48,auth.log,login_failed,192.168.1.188,192.168.1.12,41034,22,svc_admin,srv-app-prod,sshd,failure,medium,Failed password for user svc_admin from 192.168.1.188 port 41034 ssh2,CA-6096
+2026-10-16 09:14:03,auth.log,login_success,192.168.1.188,192.168.1.12,41036,22,svc_admin,srv-app-prod,sshd,success,high,Accepted password for svc_admin from 192.168.1.188 port 41036 ssh2,CA-6097
+2026-10-16 09:14:32,syslog,routine_access,192.168.1.51,192.168.1.14,56315,22,dev_user1,srv-git-01,git,allowed,low,Normal background activity for user dev_user1,CA-6098
+2026-10-16 09:14:47,syslog,routine_access,192.168.1.10,192.168.1.12,46640,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Normal background activity for user monitoring,CA-6099
+2026-10-16 09:15:13,syslog,routine_access,192.168.1.53,192.168.1.25,40807,445,hr_clerk,srv-files-01,smbd,allowed,low,Normal background activity for user hr_clerk,CA-6100
+2026-10-16 09:15:38,syslog,routine_access,192.168.1.52,192.168.1.12,50920,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal background activity for user qa_tester,CA-6101
+2026-10-16 09:16:08,syslog,routine_access,192.168.1.52,192.168.1.12,56355,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal background activity for user qa_tester,CA-6102
+2026-10-16 09:16:36,syslog,routine_access,192.168.1.10,192.168.1.12,55515,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Normal background activity for user monitoring,CA-6103
+2026-10-16 09:17:02,syslog,routine_access,192.168.1.15,192.168.1.99,40917,22,backup_svc,srv-backup,rsync,allowed,low,Normal background activity for user backup_svc,CA-6104
+2026-10-16 09:17:26,syslog,routine_access,192.168.1.15,192.168.1.99,50972,22,backup_svc,srv-backup,rsync,allowed,low,Normal background activity for user backup_svc,CA-6105
+2026-10-16 09:17:48,syslog,routine_access,192.168.1.52,192.168.1.12,50780,80,qa_tester,srv-app-prod,nginx,allowed,low,Normal background activity for user qa_tester,CA-6106
+2026-10-16 09:18:12,syslog,routine_access,192.168.1.51,192.168.1.14,49210,22,dev_user1,srv-git-01,git,allowed,low,Normal background activity for user dev_user1,CA-6107
+2026-10-16 09:22:10,audit.log,sudo_enum,192.168.1.188,192.168.1.12,41036,22,svc_admin,srv-app-prod,sudo,executed,medium,sudo: svc_admin: list allowed commands,CA-6108
+2026-10-16 09:22:20,audit.log,file_read,192.168.1.188,192.168.1.12,41036,22,svc_admin,srv-app-prod,cat,read,medium,read /etc/sudoers file,CA-6109
+2026-10-16 09:22:33,audit.log,privilege_escalation_attempt,192.168.1.188,192.168.1.12,41036,22,svc_admin,srv-app-prod,sudo,elevate,high,sudo /usr/bin/bash executed by svc_admin,CA-6110
+2026-10-16 09:22:56,audit.log,privilege_change,192.168.1.188,192.168.1.12,41036,22,root,srv-app-prod,bash,elevated,critical,Privilege transition: uid changed from 1005(svc_admin) to 0(root),CA-6111
+2026-10-16 09:23:30,syslog,routine_access,192.168.1.51,192.168.1.14,51163,22,dev_user1,srv-git-01,git,allowed,low,Routine health probe on srv-git-01,CA-6112
+2026-10-16 09:24:05,syslog,routine_access,192.168.1.10,192.168.1.12,57907,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Routine health probe on srv-app-prod,CA-6113
+2026-10-16 09:24:33,syslog,routine_access,192.168.1.52,192.168.1.12,46380,80,qa_tester,srv-app-prod,nginx,allowed,low,Routine health probe on srv-app-prod,CA-6114
+2026-10-16 09:25:11,syslog,routine_access,192.168.1.53,192.168.1.25,52736,445,hr_clerk,srv-files-01,smbd,allowed,low,Routine health probe on srv-files-01,CA-6115
+2026-10-16 09:25:37,syslog,routine_access,192.168.1.10,192.168.1.12,53600,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Routine health probe on srv-app-prod,CA-6116
+2026-10-16 09:26:14,syslog,routine_access,192.168.1.53,192.168.1.25,59946,445,hr_clerk,srv-files-01,smbd,allowed,low,Routine health probe on srv-files-01,CA-6117
+2026-10-16 09:26:35,syslog,routine_access,192.168.1.15,192.168.1.99,46762,22,backup_svc,srv-backup,rsync,allowed,low,Routine health probe on srv-backup,CA-6118
+2026-10-16 09:27:12,syslog,routine_access,192.168.1.51,192.168.1.14,42025,22,dev_user1,srv-git-01,git,allowed,low,Routine health probe on srv-git-01,CA-6119
+2026-10-16 09:27:32,syslog,routine_access,192.168.1.52,192.168.1.12,48839,80,qa_tester,srv-app-prod,nginx,allowed,low,Routine health probe on srv-app-prod,CA-6120
+2026-10-16 09:27:56,syslog,routine_access,192.168.1.52,192.168.1.12,46322,80,qa_tester,srv-app-prod,nginx,allowed,low,Routine health probe on srv-app-prod,CA-6121
+2026-10-16 09:28:19,syslog,routine_access,192.168.1.51,192.168.1.14,48593,22,dev_user1,srv-git-01,git,allowed,low,Routine health probe on srv-git-01,CA-6122
+2026-10-16 09:28:39,syslog,routine_access,192.168.1.52,192.168.1.12,48708,80,qa_tester,srv-app-prod,nginx,allowed,low,Routine health probe on srv-app-prod,CA-6123
+2026-10-16 09:29:09,syslog,routine_access,192.168.1.10,192.168.1.12,53643,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Routine health probe on srv-app-prod,CA-6124
+2026-10-16 09:29:34,syslog,routine_access,192.168.1.51,192.168.1.14,48693,22,dev_user1,srv-git-01,git,allowed,low,Routine health probe on srv-git-01,CA-6125
+2026-10-16 09:29:59,syslog,routine_access,192.168.1.10,192.168.1.12,57717,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Routine health probe on srv-app-prod,CA-6126
+2026-10-16 09:35:14,audit.log,sensitive_file_read,192.168.1.188,192.168.1.12,41036,22,root,srv-app-prod,cat,read,high,AUDIT_READ: root accessed sensitive file /etc/shadow,CA-6127
+2026-10-16 09:35:26,audit.log,sensitive_file_read,192.168.1.188,192.168.1.12,41036,22,root,srv-app-prod,cat,read,high,AUDIT_READ: root accessed sensitive file /var/www/html/config/database.php,CA-6128
+2026-10-16 09:35:37,audit.log,sensitive_file_read,192.168.1.188,192.168.1.12,41036,22,root,srv-app-prod,cat,read,high,AUDIT_READ: root accessed sensitive file /opt/app/keys/jwt_private_key.pem,CA-6129
+2026-10-16 09:35:54,audit.log,sensitive_file_read,192.168.1.188,192.168.1.12,41036,22,root,srv-app-prod,cat,read,high,AUDIT_READ: root accessed sensitive file /var/data/customer_accounts_export.csv,CA-6130
+2026-10-16 09:36:12,audit.log,file_archive,192.168.1.188,192.168.1.12,41036,22,root,srv-app-prod,tar,created,medium,tar -czvf /tmp/exfil_bundle.tar.gz /var/data/customer_accounts_export.csv /opt/app/keys/,CA-6131
+2026-10-16 09:48:12,firewall,large_outbound_transfer,192.168.1.12,10.0.0.250,52610,443,root,fw-core-01,curl,allowed,critical,FIREWALL PASS: High volume outbound stream proto=TCP bytes=207962618 dst=10.0.0.250:443,CA-6132
+2026-10-16 09:48:24,firewall,large_outbound_transfer,192.168.1.12,10.0.0.250,52664,443,root,fw-core-01,curl,allowed,critical,FIREWALL PASS: High volume outbound stream proto=TCP bytes=212587451 dst=10.0.0.250:443,CA-6133
+2026-10-16 09:48:36,firewall,large_outbound_transfer,192.168.1.12,10.0.0.250,52354,443,root,fw-core-01,curl,allowed,critical,FIREWALL PASS: High volume outbound stream proto=TCP bytes=201806635 dst=10.0.0.250:443,CA-6134
+2026-10-16 09:48:48,firewall,large_outbound_transfer,192.168.1.12,10.0.0.250,52413,443,root,fw-core-01,curl,allowed,critical,FIREWALL PASS: High volume outbound stream proto=TCP bytes=204369691 dst=10.0.0.250:443,CA-6135
+2026-10-16 09:49:00,firewall,large_outbound_transfer,192.168.1.12,10.0.0.250,52602,443,root,fw-core-01,curl,allowed,critical,FIREWALL PASS: High volume outbound stream proto=TCP bytes=221649899 dst=10.0.0.250:443,CA-6136
+2026-10-16 09:49:12,firewall,large_outbound_transfer,192.168.1.12,10.0.0.250,52255,443,root,fw-core-01,curl,allowed,critical,FIREWALL PASS: High volume outbound stream proto=TCP bytes=220128752 dst=10.0.0.250:443,CA-6137
+2026-10-16 09:50:37,syslog,routine_access,192.168.1.51,192.168.1.14,45332,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6138
+2026-10-16 09:51:15,syslog,routine_access,192.168.1.53,192.168.1.25,53563,445,hr_clerk,srv-files-01,smbd,allowed,low,Standard background communication for hr_clerk on srv-files-01,CA-6139
+2026-10-16 09:52:11,syslog,routine_access,192.168.1.51,192.168.1.14,47038,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6140
+2026-10-16 09:53:14,syslog,routine_access,192.168.1.15,192.168.1.99,43579,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6141
+2026-10-16 09:54:40,syslog,routine_access,192.168.1.10,192.168.1.12,56679,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Standard background communication for monitoring on srv-app-prod,CA-6142
+2026-10-16 09:55:19,syslog,routine_access,192.168.1.53,192.168.1.25,50565,445,hr_clerk,srv-files-01,smbd,allowed,low,Standard background communication for hr_clerk on srv-files-01,CA-6143
+2026-10-16 09:55:50,syslog,routine_access,192.168.1.15,192.168.1.99,57422,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6144
+2026-10-16 09:56:46,syslog,routine_access,192.168.1.10,192.168.1.12,59909,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Standard background communication for monitoring on srv-app-prod,CA-6145
+2026-10-16 09:57:17,syslog,routine_access,192.168.1.15,192.168.1.99,47490,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6146
+2026-10-16 09:58:04,syslog,routine_access,192.168.1.51,192.168.1.14,53864,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6147
+2026-10-16 09:58:43,syslog,routine_access,192.168.1.51,192.168.1.14,58995,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6148
+2026-10-16 10:00:12,syslog,routine_access,192.168.1.51,192.168.1.14,47362,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6149
+2026-10-16 10:01:01,syslog,routine_access,192.168.1.15,192.168.1.99,42871,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6150
+2026-10-16 10:01:32,syslog,routine_access,192.168.1.51,192.168.1.14,58909,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6151
+2026-10-16 10:03:00,syslog,routine_access,192.168.1.51,192.168.1.14,57297,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6152
+2026-10-16 10:03:31,syslog,routine_access,192.168.1.51,192.168.1.14,56376,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6153
+2026-10-16 10:04:22,syslog,routine_access,192.168.1.10,192.168.1.12,52399,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Standard background communication for monitoring on srv-app-prod,CA-6154
+2026-10-16 10:05:23,syslog,routine_access,192.168.1.52,192.168.1.12,50222,80,qa_tester,srv-app-prod,nginx,allowed,low,Standard background communication for qa_tester on srv-app-prod,CA-6155
+2026-10-16 10:06:05,syslog,routine_access,192.168.1.51,192.168.1.14,43351,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6156
+2026-10-16 10:07:13,syslog,routine_access,192.168.1.10,192.168.1.12,43506,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Standard background communication for monitoring on srv-app-prod,CA-6157
+2026-10-16 10:07:58,syslog,routine_access,192.168.1.52,192.168.1.12,44629,80,qa_tester,srv-app-prod,nginx,allowed,low,Standard background communication for qa_tester on srv-app-prod,CA-6158
+2026-10-16 10:08:37,syslog,routine_access,192.168.1.52,192.168.1.12,41976,80,qa_tester,srv-app-prod,nginx,allowed,low,Standard background communication for qa_tester on srv-app-prod,CA-6159
+2026-10-16 10:09:19,syslog,routine_access,192.168.1.52,192.168.1.12,57848,80,qa_tester,srv-app-prod,nginx,allowed,low,Standard background communication for qa_tester on srv-app-prod,CA-6160
+2026-10-16 10:10:38,syslog,routine_access,192.168.1.15,192.168.1.99,58006,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6161
+2026-10-16 10:11:15,syslog,routine_access,192.168.1.15,192.168.1.99,46942,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6162
+2026-10-16 10:12:05,syslog,routine_access,192.168.1.53,192.168.1.25,58971,445,hr_clerk,srv-files-01,smbd,allowed,low,Standard background communication for hr_clerk on srv-files-01,CA-6163
+2026-10-16 10:13:23,syslog,routine_access,192.168.1.10,192.168.1.12,46505,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Standard background communication for monitoring on srv-app-prod,CA-6164
+2026-10-16 10:14:01,syslog,routine_access,192.168.1.15,192.168.1.99,49950,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6165
+2026-10-16 10:14:31,syslog,routine_access,192.168.1.15,192.168.1.99,59587,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6166
+2026-10-16 10:15:03,syslog,routine_access,192.168.1.51,192.168.1.14,46573,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6167
+2026-10-16 10:15:43,syslog,routine_access,192.168.1.10,192.168.1.12,42938,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Standard background communication for monitoring on srv-app-prod,CA-6168
+2026-10-16 10:16:56,syslog,routine_access,192.168.1.10,192.168.1.12,53767,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Standard background communication for monitoring on srv-app-prod,CA-6169
+2026-10-16 10:17:29,syslog,routine_access,192.168.1.51,192.168.1.14,41425,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6170
+2026-10-16 10:18:30,syslog,routine_access,192.168.1.10,192.168.1.12,44927,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Standard background communication for monitoring on srv-app-prod,CA-6171
+2026-10-16 10:19:59,syslog,routine_access,192.168.1.51,192.168.1.14,50852,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6172
+2026-10-16 10:21:21,syslog,routine_access,192.168.1.51,192.168.1.14,48487,22,dev_user1,srv-git-01,git,allowed,low,Standard background communication for dev_user1 on srv-git-01,CA-6173
+2026-10-16 10:22:04,syslog,routine_access,192.168.1.52,192.168.1.12,55402,80,qa_tester,srv-app-prod,nginx,allowed,low,Standard background communication for qa_tester on srv-app-prod,CA-6174
+2026-10-16 10:23:29,syslog,routine_access,192.168.1.10,192.168.1.12,56002,9100,monitoring,srv-app-prod,node_exporter,allowed,low,Standard background communication for monitoring on srv-app-prod,CA-6175
+2026-10-16 10:24:54,syslog,routine_access,192.168.1.15,192.168.1.99,52553,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6176
+2026-10-16 10:25:48,syslog,routine_access,192.168.1.15,192.168.1.99,47954,22,backup_svc,srv-backup,rsync,allowed,low,Standard background communication for backup_svc on srv-backup,CA-6177

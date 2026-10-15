@@ -1,0 +1,31 @@
+# ============================================
+# CyberTrace - Requirements
+# ============================================
+# Core dependencies for Phase 1
+# Additional dependencies will be added as needed in later phases.
+
+# Web interface
+streamlit>=1.28.0
+
+# Data processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# ML (will be used in later phases, installing now for environment stability)
+scikit-learn>=1.3.0
+
+# Graph analysis and visualization
+networkx>=3.1
+pyvis>=0.3.2
+
+# Interactive charts
+plotly>=5.15.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# HTTP client for LLM providers (Phase 9)
+requests>=2.31.0
+
+# Testing
+pytest>=7.4.0

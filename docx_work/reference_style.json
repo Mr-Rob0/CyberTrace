@@ -1,0 +1,168 @@
+{
+  "input": "C:\\Users\\YoursPookie\\Desktop\\Certifications\\Smart_Traffic_Junction_Written_Synopsis (1).docx",
+  "fonts_by_char_count": {},
+  "direct_run_formatting_runs": 216,
+  "direct_paragraph_formatting_paragraphs": 121,
+  "heading_like_paragraphs_not_heading_style": [
+    {
+      "para_index": 4,
+      "text": "PROJECT SYNOPSIS",
+      "style": "Normal"
+    },
+    {
+      "para_index": 7,
+      "text": "BACHELOR OF TECHNOLOGY",
+      "style": "Normal"
+    },
+    {
+      "para_index": 8,
+      "text": "Computer Science and Engineering(AIML)",
+      "style": "Normal"
+    },
+    {
+      "para_index": 10,
+      "text": "SUBMITTED BY",
+      "style": "Normal"
+    },
+    {
+      "para_index": 15,
+      "text": "Under the supervision of",
+      "style": "Normal"
+    },
+    {
+      "para_index": 16,
+      "text": "MR. SATISH KUMAR",
+      "style": "Normal"
+    },
+    {
+      "para_index": 21,
+      "text": "Buddha Institute of Technology GIDA, Gorakhpur",
+      "style": "Normal"
+    },
+    {
+      "para_index": 25,
+      "text": "Dr. A.P.J. Abdul Kalam Technical University",
+      "style": "Normal"
+    },
+    {
+      "para_index": 26,
+      "text": "Uttar Pradesh, Lucknow",
+      "style": "Normal"
+    },
+    {
+      "para_index": 27,
+      "text": "September 2026",
+      "style": "Normal"
+    },
+    {
+      "para_index": 29,
+      "text": "INDEX",
+      "style": "Normal"
+    },
+    {
+      "para_index": 39,
+      "text": "NOTATIONS / NOMENCLATURE",
+      "style": "Normal"
+    },
+    {
+      "para_index": 73,
+      "text": "Table 2.1: Feature comparison of existing platforms",
+      "style": "Normal"
+    },
+    {
+      "para_index": 93,
+      "text": "Table 3.1: Phase-wise plan of work",
+      "style": "Normal"
+    },
+    {
+      "para_index": 96,
+      "text": "Table 4.1: Software and tools required",
+      "style": "Normal"
+    },
+    {
+      "para_index": 98,
+      "text": "Table 4.2: Hardware required",
+      "style": "Normal"
+    },
+    {
+      "para_index": 126,
+      "text": "Contents",
+      "style": "Normal"
+    },
+    {
+      "para_index": 149,
+      "text": "Abbreviation",
+      "style": "Normal"
+    },
+    {
+      "para_index": 150,
+      "text": "Expansion",
+      "style": "Normal"
+    },
+    {
+      "para_index": 171,
+      "text": "Platform",
+      "style": "Normal"
+    }
+  ],
+  "examples": {
+    "direct_paragraph_formatting": [
+      {
+        "para_index": 2,
+        "text": "AI-Based Smart Traffic Junction with Real Time Vehicle Tracking and Urban Traffic Analysis",
+        "style": "Normal"
+      },
+      {
+        "para_index": 3,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 4,
+        "text": "PROJECT SYNOPSIS",
+        "style": "Normal"
+      },
+      {
+        "para_index": 5,
+        "text": "Of MINI PROJECT",
+        "style": "Normal"
+      },
+      {
+        "para_index": 6,
+        "text": "",
+        "style": "Normal"
+      }
+    ],
+    "direct_run_formatting": [
+      {
+        "para_index": 2,
+        "run_text": "AI-Based Smart Traffic Junction with Real Time Vehicle Tracking and Urban Traffi",
+        "style": "Normal"
+      },
+      {
+        "para_index": 4,
+        "run_text": "PROJECT SYNOPSIS",
+        "style": "Normal"
+      },
+      {
+        "para_index": 7,
+        "run_text": "BACHELOR OF TECHNOLOGY",
+        "style": "Normal"
+      },
+      {
+        "para_index": 8,
+        "run_text": "Computer Science and ",
+        "style": "Normal"
+      },
+      {
+        "para_index": 8,
+        "run_text": "Engineering",
+        "style": "Normal"
+      }
+    ]
+  },
+  "notes": [
+    "Direct formatting is not always wrong, but it often causes inconsistent output when templates change.",
+    "Heading-like paragraphs not using Heading styles can break TOC and accessibility."
+  ]
+}

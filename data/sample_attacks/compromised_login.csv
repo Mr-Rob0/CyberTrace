@@ -1,0 +1,54 @@
+timestamp,source,event_type,source_ip,destination_ip,source_port,destination_port,username,hostname,process,action,severity,raw_message,event_id
+2026-10-15 11:02:42,auth.log,login_success,192.168.1.45,192.168.1.60,50276,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3000
+2026-10-15 11:05:08,auth.log,login_success,192.168.1.45,192.168.1.60,55793,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3001
+2026-10-15 11:07:15,auth.log,login_success,192.168.1.45,192.168.1.60,58132,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3002
+2026-10-15 11:09:34,auth.log,login_success,192.168.1.45,192.168.1.60,57917,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3003
+2026-10-15 11:11:15,auth.log,login_success,192.168.1.45,192.168.1.60,59092,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3004
+2026-10-15 11:13:13,auth.log,login_success,192.168.1.45,192.168.1.60,50006,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3005
+2026-10-15 11:16:11,auth.log,login_success,192.168.1.45,192.168.1.60,58124,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3006
+2026-10-15 11:17:58,auth.log,login_success,192.168.1.45,192.168.1.60,54925,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3007
+2026-10-15 11:19:32,auth.log,login_success,192.168.1.45,192.168.1.60,52020,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3008
+2026-10-15 11:21:34,auth.log,login_success,192.168.1.45,192.168.1.60,50802,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3009
+2026-10-15 11:23:55,auth.log,login_success,192.168.1.45,192.168.1.60,51498,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3010
+2026-10-15 11:26:11,auth.log,login_success,192.168.1.45,192.168.1.60,56608,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3011
+2026-10-15 11:28:12,auth.log,login_success,192.168.1.45,192.168.1.60,55263,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3012
+2026-10-15 11:30:14,auth.log,login_success,192.168.1.45,192.168.1.60,58798,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3013
+2026-10-15 11:31:27,auth.log,login_success,192.168.1.45,192.168.1.60,59271,22,mrodriguez,srv-workstation-09,sshd,success,low,Session opened for user mrodriguez by (uid=1003),CL-3014
+2026-10-15 11:45:09,auth.log,login_failed,10.0.0.120,192.168.1.60,45500,22,mrodriguez,srv-workstation-09,sshd,failure,medium,Failed password for mrodriguez from 10.0.0.120 port 45102 ssh2,CL-3015
+2026-10-15 11:45:19,auth.log,login_failed,10.0.0.120,192.168.1.60,45373,22,mrodriguez,srv-workstation-09,sshd,failure,medium,Failed password for mrodriguez from 10.0.0.120 port 45102 ssh2,CL-3016
+2026-10-15 11:45:26,auth.log,login_failed,10.0.0.120,192.168.1.60,47616,22,mrodriguez,srv-workstation-09,sshd,failure,medium,Failed password for mrodriguez from 10.0.0.120 port 45102 ssh2,CL-3017
+2026-10-15 11:45:34,auth.log,login_failed,10.0.0.120,192.168.1.60,46944,22,mrodriguez,srv-workstation-09,sshd,failure,medium,Failed password for mrodriguez from 10.0.0.120 port 45102 ssh2,CL-3018
+2026-10-15 11:45:47,auth.log,login_failed,10.0.0.120,192.168.1.60,47216,22,mrodriguez,srv-workstation-09,sshd,failure,medium,Failed password for mrodriguez from 10.0.0.120 port 45102 ssh2,CL-3019
+2026-10-15 11:45:59,auth.log,login_success,10.0.0.120,192.168.1.60,45110,22,mrodriguez,srv-workstation-09,sshd,success,high,Accepted password for mrodriguez from 10.0.0.120 port 45110 ssh2 [UNUSUAL_GEO],CL-3020
+2026-10-15 11:46:19,audit.log,session_enum,10.0.0.120,192.168.1.60,45110,22,mrodriguez,srv-workstation-09,bash,executed,medium,EXECVE: cmd='whoami' uid=1003(mrodriguez),CL-3021
+2026-10-15 11:46:37,audit.log,session_enum,10.0.0.120,192.168.1.60,45110,22,mrodriguez,srv-workstation-09,bash,executed,medium,EXECVE: cmd='id' uid=1003(mrodriguez),CL-3022
+2026-10-15 11:46:53,audit.log,file_read,10.0.0.120,192.168.1.60,45110,22,mrodriguez,srv-workstation-09,bash,executed,medium,EXECVE: cmd='cat /etc/passwd' uid=1003(mrodriguez),CL-3023
+2026-10-15 11:47:03,audit.log,network_recon,10.0.0.120,192.168.1.60,45110,22,mrodriguez,srv-workstation-09,bash,executed,medium,EXECVE: cmd='netstat -antup' uid=1003(mrodriguez),CL-3024
+2026-10-15 11:47:17,audit.log,privilege_recon,10.0.0.120,192.168.1.60,45110,22,mrodriguez,srv-workstation-09,bash,executed,medium,EXECVE: cmd='find / -perm -4000 2>/dev/null' uid=1003(mrodriguez),CL-3025
+2026-10-15 11:47:35,audit.log,credential_access,10.0.0.120,192.168.1.60,45110,22,mrodriguez,srv-workstation-09,bash,executed,medium,EXECVE: cmd='cat ~/.ssh/id_rsa' uid=1003(mrodriguez),CL-3026
+2026-10-15 11:47:46,audit.log,recon,10.0.0.120,192.168.1.60,45110,22,mrodriguez,srv-workstation-09,bash,executed,medium,EXECVE: cmd='ls -la /var/log' uid=1003(mrodriguez),CL-3027
+2026-10-15 11:48:41,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3028
+2026-10-15 11:49:27,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3029
+2026-10-15 11:50:32,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3030
+2026-10-15 11:51:12,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3031
+2026-10-15 11:52:49,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3032
+2026-10-15 11:53:41,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3033
+2026-10-15 11:54:33,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3034
+2026-10-15 11:56:05,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3035
+2026-10-15 11:56:57,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3036
+2026-10-15 11:57:57,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3037
+2026-10-15 11:58:46,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3038
+2026-10-15 12:00:03,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3039
+2026-10-15 12:01:33,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3040
+2026-10-15 12:02:27,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3041
+2026-10-15 12:03:47,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3042
+2026-10-15 12:04:48,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3043
+2026-10-15 12:05:31,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3044
+2026-10-15 12:06:54,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3045
+2026-10-15 12:08:11,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3046
+2026-10-15 12:09:49,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3047
+2026-10-15 12:10:48,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3048
+2026-10-15 12:11:35,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3049
+2026-10-15 12:13:01,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3050
+2026-10-15 12:13:46,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3051
+2026-10-15 12:14:50,syslog,cron_job,192.168.1.60,192.168.1.60,0,0,root,srv-workstation-09,crond,success,low,CROND[1420]: (root) CMD (/usr/lib64/sa/sa1 1 1),CL-3052

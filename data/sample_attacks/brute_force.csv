@@ -1,0 +1,72 @@
+timestamp,source,event_type,source_ip,destination_ip,source_port,destination_port,username,hostname,process,action,severity,raw_message,event_id
+2026-10-15 08:30:47,auth.log,login_success,192.168.1.43,192.168.1.20,52692,22,charlie,srv-auth-01,sshd,success,low,Accepted publickey for charlie from 192.168.1.43 port 52140 ssh2,BF-1000
+2026-10-15 08:32:21,auth.log,login_success,192.168.1.43,192.168.1.20,55407,22,charlie,srv-auth-01,sshd,success,low,Accepted publickey for charlie from 192.168.1.43 port 52140 ssh2,BF-1001
+2026-10-15 08:34:08,auth.log,login_success,192.168.1.42,192.168.1.20,58748,22,bob,srv-auth-01,sshd,success,low,Accepted publickey for bob from 192.168.1.42 port 52140 ssh2,BF-1002
+2026-10-15 08:35:54,auth.log,login_success,192.168.1.42,192.168.1.20,58111,22,bob,srv-auth-01,sshd,success,low,Accepted publickey for bob from 192.168.1.42 port 52140 ssh2,BF-1003
+2026-10-15 08:37:38,auth.log,login_success,192.168.1.41,192.168.1.20,50653,22,alice,srv-auth-01,sshd,success,low,Accepted publickey for alice from 192.168.1.41 port 52140 ssh2,BF-1004
+2026-10-15 08:39:18,auth.log,login_success,192.168.1.43,192.168.1.20,56162,22,charlie,srv-auth-01,sshd,success,low,Accepted publickey for charlie from 192.168.1.43 port 52140 ssh2,BF-1005
+2026-10-15 08:40:47,auth.log,login_success,192.168.1.43,192.168.1.20,50272,22,charlie,srv-auth-01,sshd,success,low,Accepted publickey for charlie from 192.168.1.43 port 52140 ssh2,BF-1006
+2026-10-15 08:41:56,auth.log,login_success,192.168.1.41,192.168.1.20,56607,22,alice,srv-auth-01,sshd,success,low,Accepted publickey for alice from 192.168.1.41 port 52140 ssh2,BF-1007
+2026-10-15 08:42:43,auth.log,login_success,192.168.1.41,192.168.1.20,59160,22,alice,srv-auth-01,sshd,success,low,Accepted publickey for alice from 192.168.1.41 port 52140 ssh2,BF-1008
+2026-10-15 08:43:44,auth.log,login_success,192.168.1.41,192.168.1.20,58873,22,alice,srv-auth-01,sshd,success,low,Accepted publickey for alice from 192.168.1.41 port 52140 ssh2,BF-1009
+2026-10-15 08:45:15,auth.log,login_success,192.168.1.41,192.168.1.20,54362,22,alice,srv-auth-01,sshd,success,low,Accepted publickey for alice from 192.168.1.41 port 52140 ssh2,BF-1010
+2026-10-15 08:46:18,auth.log,login_success,192.168.1.43,192.168.1.20,50135,22,charlie,srv-auth-01,sshd,success,low,Accepted publickey for charlie from 192.168.1.43 port 52140 ssh2,BF-1011
+2026-10-15 08:47:29,auth.log,login_success,192.168.1.42,192.168.1.20,52381,22,bob,srv-auth-01,sshd,success,low,Accepted publickey for bob from 192.168.1.42 port 52140 ssh2,BF-1012
+2026-10-15 08:48:54,auth.log,login_success,192.168.1.43,192.168.1.20,59901,22,charlie,srv-auth-01,sshd,success,low,Accepted publickey for charlie from 192.168.1.43 port 52140 ssh2,BF-1013
+2026-10-15 08:50:40,auth.log,login_success,192.168.1.42,192.168.1.20,55651,22,bob,srv-auth-01,sshd,success,low,Accepted publickey for bob from 192.168.1.42 port 52140 ssh2,BF-1014
+2026-10-15 08:51:34,auth.log,login_success,192.168.1.41,192.168.1.20,57857,22,alice,srv-auth-01,sshd,success,low,Accepted publickey for alice from 192.168.1.41 port 52140 ssh2,BF-1015
+2026-10-15 08:52:25,auth.log,login_success,192.168.1.42,192.168.1.20,50273,22,bob,srv-auth-01,sshd,success,low,Accepted publickey for bob from 192.168.1.42 port 52140 ssh2,BF-1016
+2026-10-15 08:54:21,auth.log,login_success,192.168.1.42,192.168.1.20,52362,22,bob,srv-auth-01,sshd,success,low,Accepted publickey for bob from 192.168.1.42 port 52140 ssh2,BF-1017
+2026-10-15 08:56:12,auth.log,login_success,192.168.1.42,192.168.1.20,58923,22,bob,srv-auth-01,sshd,success,low,Accepted publickey for bob from 192.168.1.42 port 52140 ssh2,BF-1018
+2026-10-15 08:57:19,auth.log,login_success,192.168.1.41,192.168.1.20,59936,22,alice,srv-auth-01,sshd,success,low,Accepted publickey for alice from 192.168.1.41 port 52140 ssh2,BF-1019
+2026-10-15 09:15:07,auth.log,login_failed,192.168.1.105,192.168.1.20,40000,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40000 ssh2,BF-1020
+2026-10-15 09:15:11,auth.log,login_failed,192.168.1.105,192.168.1.20,40001,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40001 ssh2,BF-1021
+2026-10-15 09:15:14,auth.log,login_failed,192.168.1.105,192.168.1.20,40002,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40002 ssh2,BF-1022
+2026-10-15 09:15:19,auth.log,login_failed,192.168.1.105,192.168.1.20,40003,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40003 ssh2,BF-1023
+2026-10-15 09:15:23,auth.log,login_failed,192.168.1.105,192.168.1.20,40004,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40004 ssh2,BF-1024
+2026-10-15 09:15:31,auth.log,login_failed,192.168.1.105,192.168.1.20,40005,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40005 ssh2,BF-1025
+2026-10-15 09:15:36,auth.log,login_failed,192.168.1.105,192.168.1.20,40006,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40006 ssh2,BF-1026
+2026-10-15 09:15:41,auth.log,login_failed,192.168.1.105,192.168.1.20,40007,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40007 ssh2,BF-1027
+2026-10-15 09:15:45,auth.log,login_failed,192.168.1.105,192.168.1.20,40008,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40008 ssh2,BF-1028
+2026-10-15 09:15:48,auth.log,login_failed,192.168.1.105,192.168.1.20,40009,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40009 ssh2,BF-1029
+2026-10-15 09:15:51,auth.log,login_failed,192.168.1.105,192.168.1.20,40010,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40010 ssh2,BF-1030
+2026-10-15 09:15:59,auth.log,login_failed,192.168.1.105,192.168.1.20,40011,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40011 ssh2,BF-1031
+2026-10-15 09:16:06,auth.log,login_failed,192.168.1.105,192.168.1.20,40012,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40012 ssh2,BF-1032
+2026-10-15 09:16:13,auth.log,login_failed,192.168.1.105,192.168.1.20,40013,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40013 ssh2,BF-1033
+2026-10-15 09:16:19,auth.log,login_failed,192.168.1.105,192.168.1.20,40014,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40014 ssh2,BF-1034
+2026-10-15 09:16:23,auth.log,login_failed,192.168.1.105,192.168.1.20,40015,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40015 ssh2,BF-1035
+2026-10-15 09:16:29,auth.log,login_failed,192.168.1.105,192.168.1.20,40016,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40016 ssh2,BF-1036
+2026-10-15 09:16:32,auth.log,login_failed,192.168.1.105,192.168.1.20,40017,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40017 ssh2,BF-1037
+2026-10-15 09:16:35,auth.log,login_failed,192.168.1.105,192.168.1.20,40018,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40018 ssh2,BF-1038
+2026-10-15 09:16:38,auth.log,login_failed,192.168.1.105,192.168.1.20,40019,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40019 ssh2,BF-1039
+2026-10-15 09:16:46,auth.log,login_failed,192.168.1.105,192.168.1.20,40020,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40020 ssh2,BF-1040
+2026-10-15 09:16:51,auth.log,login_failed,192.168.1.105,192.168.1.20,40021,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40021 ssh2,BF-1041
+2026-10-15 09:16:59,auth.log,login_failed,192.168.1.105,192.168.1.20,40022,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40022 ssh2,BF-1042
+2026-10-15 09:17:07,auth.log,login_failed,192.168.1.105,192.168.1.20,40023,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40023 ssh2,BF-1043
+2026-10-15 09:17:13,auth.log,login_failed,192.168.1.105,192.168.1.20,40024,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40024 ssh2,BF-1044
+2026-10-15 09:17:17,auth.log,login_failed,192.168.1.105,192.168.1.20,40025,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40025 ssh2,BF-1045
+2026-10-15 09:17:21,auth.log,login_failed,192.168.1.105,192.168.1.20,40026,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40026 ssh2,BF-1046
+2026-10-15 09:17:27,auth.log,login_failed,192.168.1.105,192.168.1.20,40027,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40027 ssh2,BF-1047
+2026-10-15 09:17:31,auth.log,login_failed,192.168.1.105,192.168.1.20,40028,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40028 ssh2,BF-1048
+2026-10-15 09:17:38,auth.log,login_failed,192.168.1.105,192.168.1.20,40029,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40029 ssh2,BF-1049
+2026-10-15 09:17:42,auth.log,login_failed,192.168.1.105,192.168.1.20,40030,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40030 ssh2,BF-1050
+2026-10-15 09:17:46,auth.log,login_failed,192.168.1.105,192.168.1.20,40031,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40031 ssh2,BF-1051
+2026-10-15 09:17:53,auth.log,login_failed,192.168.1.105,192.168.1.20,40032,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40032 ssh2,BF-1052
+2026-10-15 09:17:57,auth.log,login_failed,192.168.1.105,192.168.1.20,40033,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40033 ssh2,BF-1053
+2026-10-15 09:18:02,auth.log,login_failed,192.168.1.105,192.168.1.20,40034,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40034 ssh2,BF-1054
+2026-10-15 09:18:10,auth.log,login_failed,192.168.1.105,192.168.1.20,40035,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40035 ssh2,BF-1055
+2026-10-15 09:18:15,auth.log,login_failed,192.168.1.105,192.168.1.20,40036,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40036 ssh2,BF-1056
+2026-10-15 09:18:22,auth.log,login_failed,192.168.1.105,192.168.1.20,40037,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40037 ssh2,BF-1057
+2026-10-15 09:18:26,auth.log,login_failed,192.168.1.105,192.168.1.20,40038,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40038 ssh2,BF-1058
+2026-10-15 09:18:34,auth.log,login_failed,192.168.1.105,192.168.1.20,40039,22,admin,srv-auth-01,sshd,failure,medium,Failed password for invalid user admin from 192.168.1.105 port 40039 ssh2,BF-1059
+2026-10-15 09:18:40,auth.log,login_success,192.168.1.105,192.168.1.20,40041,22,admin,srv-auth-01,sshd,success,high,Accepted password for admin from 192.168.1.105 port 40041 ssh2,BF-1060
+2026-10-15 09:19:23,syslog,web_access,192.168.1.41,192.168.1.10,57705,80,alice,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=alice,BF-1061
+2026-10-15 09:20:11,syslog,web_access,192.168.1.41,192.168.1.10,54344,80,alice,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=alice,BF-1062
+2026-10-15 09:21:11,syslog,web_access,192.168.1.42,192.168.1.10,56481,80,bob,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=bob,BF-1063
+2026-10-15 09:22:21,syslog,web_access,192.168.1.42,192.168.1.10,53658,80,bob,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=bob,BF-1064
+2026-10-15 09:23:06,syslog,web_access,192.168.1.43,192.168.1.10,51219,80,charlie,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=charlie,BF-1065
+2026-10-15 09:24:19,syslog,web_access,192.168.1.41,192.168.1.10,51178,80,alice,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=alice,BF-1066
+2026-10-15 09:25:11,syslog,web_access,192.168.1.42,192.168.1.10,56425,80,bob,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=bob,BF-1067
+2026-10-15 09:26:26,syslog,web_access,192.168.1.41,192.168.1.10,53412,80,alice,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=alice,BF-1068
+2026-10-15 09:27:17,syslog,web_access,192.168.1.41,192.168.1.10,58143,80,alice,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=alice,BF-1069
+2026-10-15 09:27:50,syslog,web_access,192.168.1.42,192.168.1.10,57870,80,bob,srv-web-01,nginx,allowed,low,HTTP GET /dashboard 200 OK user=bob,BF-1070

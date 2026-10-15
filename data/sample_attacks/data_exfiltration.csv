@@ -1,0 +1,56 @@
+timestamp,source,event_type,source_ip,destination_ip,source_port,destination_port,username,hostname,process,action,severity,raw_message,event_id
+2026-10-15 14:01:55,file_audit,file_access,192.168.1.70,192.168.1.25,57465,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5000
+2026-10-15 14:02:35,file_audit,file_access,192.168.1.70,192.168.1.25,50937,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5001
+2026-10-15 14:03:26,file_audit,file_access,192.168.1.70,192.168.1.25,57845,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5002
+2026-10-15 14:04:31,file_audit,file_access,192.168.1.70,192.168.1.25,54566,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5003
+2026-10-15 14:05:41,file_audit,file_access,192.168.1.70,192.168.1.25,59873,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5004
+2026-10-15 14:07:22,file_audit,file_access,192.168.1.70,192.168.1.25,55009,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5005
+2026-10-15 14:08:04,file_audit,file_access,192.168.1.70,192.168.1.25,59118,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5006
+2026-10-15 14:09:48,file_audit,file_access,192.168.1.70,192.168.1.25,59129,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5007
+2026-10-15 14:10:56,file_audit,file_access,192.168.1.70,192.168.1.25,56890,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5008
+2026-10-15 14:12:01,file_audit,file_access,192.168.1.70,192.168.1.25,54013,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5009
+2026-10-15 14:13:42,file_audit,file_access,192.168.1.70,192.168.1.25,55515,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5010
+2026-10-15 14:14:49,file_audit,file_access,192.168.1.70,192.168.1.25,51469,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5011
+2026-10-15 14:16:29,file_audit,file_access,192.168.1.70,192.168.1.25,59481,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5012
+2026-10-15 14:17:27,file_audit,file_access,192.168.1.70,192.168.1.25,59073,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5013
+2026-10-15 14:18:49,file_audit,file_access,192.168.1.70,192.168.1.25,58064,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5014
+2026-10-15 14:20:49,file_audit,file_access,192.168.1.70,192.168.1.25,50964,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5015
+2026-10-15 14:22:25,file_audit,file_access,192.168.1.70,192.168.1.25,59953,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5016
+2026-10-15 14:24:01,file_audit,file_access,192.168.1.70,192.168.1.25,58915,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5017
+2026-10-15 14:25:53,file_audit,file_access,192.168.1.70,192.168.1.25,56129,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5018
+2026-10-15 14:26:54,file_audit,file_access,192.168.1.70,192.168.1.25,54281,445,dpatel,srv-files-01,smbd,read,low,Read access granted to share /public/templates/meeting_notes.docx,DX-5019
+2026-10-15 14:45:24,file_audit,sensitive_file_read,192.168.1.70,192.168.1.25,59923,445,dpatel,srv-files-01,smbd,read,medium,Access granted to restricted share file /confidential/finance/q4_earnings_draft.xlsx,DX-5020
+2026-10-15 14:45:34,file_audit,sensitive_file_read,192.168.1.70,192.168.1.25,51643,445,dpatel,srv-files-01,smbd,read,medium,Access granted to restricted share file /confidential/hr/employee_ssn_records.csv,DX-5021
+2026-10-15 14:45:48,file_audit,sensitive_file_read,192.168.1.70,192.168.1.25,54685,445,dpatel,srv-files-01,smbd,read,medium,Access granted to restricted share file /confidential/intellectual_property/patents_2026.pdf,DX-5022
+2026-10-15 14:46:05,file_audit,sensitive_file_read,192.168.1.70,192.168.1.25,53841,445,dpatel,srv-files-01,smbd,read,medium,Access granted to restricted share file /confidential/database_backups/customer_pii.sql,DX-5023
+2026-10-15 14:46:25,audit.log,file_archive,192.168.1.70,192.168.1.70,0,0,dpatel,workstation-70,tar,created,medium,tar -czvf /tmp/staging_archive.tar.gz /mnt/shares/confidential/*,DX-5024
+2026-10-15 14:47:15,firewall,large_outbound_transfer,192.168.1.70,10.0.0.95,55931,8443,dpatel,fw-core-01,curl,allowed,high,FIREWALL PASS: High volume outbound stream proto=TCP bytes=134366387 dst=10.0.0.95:8443,DX-5025
+2026-10-15 14:47:30,firewall,large_outbound_transfer,192.168.1.70,10.0.0.95,55887,8443,dpatel,fw-core-01,curl,allowed,high,FIREWALL PASS: High volume outbound stream proto=TCP bytes=144459560 dst=10.0.0.95:8443,DX-5026
+2026-10-15 14:47:45,firewall,large_outbound_transfer,192.168.1.70,10.0.0.95,55899,8443,dpatel,fw-core-01,curl,allowed,high,FIREWALL PASS: High volume outbound stream proto=TCP bytes=140439530 dst=10.0.0.95:8443,DX-5027
+2026-10-15 14:48:00,firewall,large_outbound_transfer,192.168.1.70,10.0.0.95,55448,8443,dpatel,fw-core-01,curl,allowed,high,FIREWALL PASS: High volume outbound stream proto=TCP bytes=129102408 dst=10.0.0.95:8443,DX-5028
+2026-10-15 14:48:15,firewall,large_outbound_transfer,192.168.1.70,10.0.0.95,55465,8443,dpatel,fw-core-01,curl,allowed,high,FIREWALL PASS: High volume outbound stream proto=TCP bytes=124530021 dst=10.0.0.95:8443,DX-5029
+2026-10-15 14:49:04,firewall,network_flow,192.168.1.33,192.168.1.10,50049,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5030
+2026-10-15 14:49:38,firewall,network_flow,192.168.1.33,192.168.1.10,57060,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5031
+2026-10-15 14:50:11,firewall,network_flow,192.168.1.33,192.168.1.10,57252,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5032
+2026-10-15 14:51:29,firewall,network_flow,192.168.1.33,192.168.1.10,53403,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5033
+2026-10-15 14:52:42,firewall,network_flow,192.168.1.33,192.168.1.10,53771,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5034
+2026-10-15 14:53:31,firewall,network_flow,192.168.1.33,192.168.1.10,44921,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5035
+2026-10-15 14:54:45,firewall,network_flow,192.168.1.33,192.168.1.10,56615,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5036
+2026-10-15 14:55:55,firewall,network_flow,192.168.1.33,192.168.1.10,56339,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5037
+2026-10-15 14:56:30,firewall,network_flow,192.168.1.33,192.168.1.10,41679,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5038
+2026-10-15 14:57:04,firewall,network_flow,192.168.1.33,192.168.1.10,52944,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5039
+2026-10-15 14:57:40,firewall,network_flow,192.168.1.33,192.168.1.10,52648,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5040
+2026-10-15 14:58:17,firewall,network_flow,192.168.1.33,192.168.1.10,54586,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5041
+2026-10-15 14:59:14,firewall,network_flow,192.168.1.33,192.168.1.10,46347,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5042
+2026-10-15 15:00:21,firewall,network_flow,192.168.1.33,192.168.1.10,41743,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5043
+2026-10-15 15:01:01,firewall,network_flow,192.168.1.33,192.168.1.10,54623,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5044
+2026-10-15 15:02:12,firewall,network_flow,192.168.1.33,192.168.1.10,58532,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5045
+2026-10-15 15:03:02,firewall,network_flow,192.168.1.33,192.168.1.10,42839,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5046
+2026-10-15 15:03:34,firewall,network_flow,192.168.1.33,192.168.1.10,54014,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5047
+2026-10-15 15:04:23,firewall,network_flow,192.168.1.33,192.168.1.10,57746,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5048
+2026-10-15 15:05:20,firewall,network_flow,192.168.1.33,192.168.1.10,48191,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5049
+2026-10-15 15:06:07,firewall,network_flow,192.168.1.33,192.168.1.10,50180,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5050
+2026-10-15 15:07:10,firewall,network_flow,192.168.1.33,192.168.1.10,59902,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5051
+2026-10-15 15:07:59,firewall,network_flow,192.168.1.33,192.168.1.10,42619,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5052
+2026-10-15 15:09:26,firewall,network_flow,192.168.1.33,192.168.1.10,53455,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5053
+2026-10-15 15:10:46,firewall,network_flow,192.168.1.33,192.168.1.10,58945,443,,fw-core-01,kernel,allowed,low,FIREWALL PASS: proto=TCP src=192.168.1.33 dst=192.168.1.10:443 bytes=1240,DX-5054

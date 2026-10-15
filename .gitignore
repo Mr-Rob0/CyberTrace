@@ -1,0 +1,63 @@
+# ============================================
+# CyberTrace .gitignore
+# ============================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+*.manifest
+*.spec
+
+# Virtual Environment
+venv/
+env/
+.venv/
+.env
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.backup
+.project
+.settings/
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Jupyter Notebooks (if used)
+.ipynb_checkpoints/
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Data files (don't commit raw logs to git)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Sample attack data is OK to commit
+# data/sample_attacks/ is NOT ignored
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Logs
+*.log
+
+# Environment
+.env
