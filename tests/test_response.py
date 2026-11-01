@@ -41,3 +41,48 @@ def test_counterfactual_reports_no_coverage_honestly():
     result = run_what_if_analysis(_incident()["attack_chain"], ["EMAIL_FILTERING"])
     assert result["blocked_at"] is None
     assert result["effectiveness"] == 0
+
+
+def test_recommendations_for_discovery_and_insider_data_access():
+    inc_discovery = {
+        "severity": "MEDIUM", "confidence": 0.8, "detection_count": 1,
+        "attack_chain": {"steps": [{"step_id": "STEP-0001", "stage": "DISCOVERY"}]},
+        "root_cause": {"candidate_type": "UNKNOWN"},
+    }
+    actions_disc = recommend_actions(inc_discovery)
+    text_disc = " ".join(item["action"] for item in actions_disc)
+    assert "port-scan" in text_disc or "network services" in text_disc
+
+    inc_insider = {
+        "severity": "HIGH", "confidence": 0.85, "detection_count": 2,
+        "attack_chain": {"steps": [
+            {"step_id": "STEP-0001", "stage": "COLLECTION"},
+            {"step_id": "STEP-0002", "stage": "EXFILTRATION"},
+        ]},
+        "root_cause": {"candidate_type": "INSIDER_DATA_ACCESS"},
+    }
+    actions_insider = recommend_actions(inc_insider)
+    text_insider = " ".join(item["action"] for item in actions_insider)
+    assert "local file access" in text_insider or "staging" in text_insider
+
+
+def test_what_if_analysis_with_dlp_and_firewall():
+    chain = {
+        "steps": [
+            {"step_id": "STEP-0001", "stage": "DISCOVERY"},
+            {"step_id": "STEP-0002", "stage": "COLLECTION"},
+            {"step_id": "STEP-0003", "stage": "EXFILTRATION"},
+        ]
+    }
+    res_fw = run_what_if_analysis(chain, ["FIREWALL_FILTERING"])
+    assert res_fw["blocked_at"]["step_id"] == "STEP-0001"
+    assert res_fw["prevented_steps"] == ["STEP-0001", "STEP-0002", "STEP-0003"]
+    assert res_fw["unmitigated_steps"] == []
+    assert res_fw["effectiveness"] == 100
+
+    res_dlp = run_what_if_analysis(chain, ["DATA_LOSS_PREVENTION"])
+    assert res_dlp["blocked_at"]["step_id"] == "STEP-0002"
+    assert res_dlp["prevented_steps"] == ["STEP-0002", "STEP-0003"]
+    assert res_dlp["unmitigated_steps"] == ["STEP-0001"]
+    assert res_dlp["effectiveness"] == 67
+

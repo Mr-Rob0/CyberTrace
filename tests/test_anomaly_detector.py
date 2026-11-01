@@ -621,3 +621,23 @@ class TestPhase81ScoreSemanticsAudit:
         assert "Statistical anomaly signal only" in res.disclaimer
         assert "does NOT constitute proof of malicious activity or an attack" in res.disclaimer
 
+    def test_baseline_training_vs_attack_evaluation_anomaly_counts(self):
+        """Verify anomaly count semantics: baseline self-evaluation yields ~5%, while attack evaluation flags majority."""
+        from detection.anomaly_detector import detect_anomalies
+        from preprocessing.log_parser import parse_log_file
+
+        normal_events = parse_log_file("data/sample_attacks/normal_activity.csv").events
+        norm_res = detect_anomalies(normal_events)
+        norm_anom_count = sum(1 for r in norm_res if r.is_anomaly)
+
+        # Baseline: 7 of 130 events (5.38%, consistent with contamination=0.05)
+        assert norm_anom_count == 7
+
+        bf_events = parse_log_file("data/sample_attacks/brute_force.csv").events
+        bf_res = detect_anomalies(bf_events)
+        bf_anom_count = sum(1 for r in bf_res if r.is_anomaly)
+
+        # Attack scenario: 61 of 71 events flagged due to extreme deviation from benign baseline
+        assert bf_anom_count == 61
+
+

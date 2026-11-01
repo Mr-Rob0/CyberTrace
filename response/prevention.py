@@ -37,6 +37,10 @@ def recommend_actions(incident: dict) -> list:
     if "COLLECTION" in stages or "EXFILTRATION" in stages:
         add("Block suspicious egress paths and review outbound transfer destinations and volumes.", "CRITICAL", "Collection or outbound-transfer activity may indicate data exposure.", "data protection")
         add("Rotate secrets accessible to affected accounts and hosts.", "HIGH", "Sensitive data or credentials may have been accessible after compromise.", "data protection")
+    if cause_type == "INSIDER_DATA_ACCESS":
+        add("Audit local file access permissions and monitor privileged staging directories for unauthorized bulk reads.", "HIGH", "Sensitive local file access or exfiltration suggests internal access abuse.", "data protection")
+    if "DISCOVERY" in stages:
+        add("Audit open network services on targeted hosts and apply network access controls or port-scan rate limiting.", "HIGH", "Reconnaissance activity indicates active scanning or enumeration of perimeter services.", "network")
     if "LATERAL_MOVEMENT" in stages:
         add("Segment affected systems and inspect peer authentication for lateral movement.", "HIGH", "Cross-host progression requires scoped containment and validation.", "network")
     add("Document the response decision and validate remediation with a follow-up log review.", "MEDIUM", "Maintains an auditable response trail and checks for recurrence.", "verification")

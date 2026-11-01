@@ -155,3 +155,94 @@ class TestRootCauseAnalysisIntegration:
         for i in range(len(candidates) - 1):
             assert candidates[i].confidence >= candidates[i + 1].confidence
             assert candidates[i].rank == i + 1
+
+    def test_standalone_brute_force_identifies_credential_compromise(self):
+        """Standalone brute force dataset should identify CREDENTIAL_COMPROMISE with evidence."""
+        filepath = os.path.join(DATA_DIR, "brute_force.csv")
+        parse_res = parse_log_file(filepath)
+        engine = RuleEngine()
+        detections = engine.detect(parse_res.events)
+        correlator = EventCorrelator()
+        groups = correlator.correlate(detections)
+        detector = IncidentDetector()
+        incidents = detector.detect_incidents(groups)
+        chain = AttackChainReconstructor().reconstruct(incidents[0], events=parse_res.events, detections=detections)
+        candidates = RootCauseAnalyzer().analyze(chain)
+
+        assert len(candidates) >= 1
+        primary = candidates[0]
+        assert primary.is_primary is True
+        assert primary.candidate_type == RootCauseType.CREDENTIAL_COMPROMISE.value
+        assert primary.confidence >= 0.80
+        assert len(primary.evidence_event_ids) > 0
+
+    def test_data_exfiltration_identifies_insider_data_access(self):
+        """Data exfiltration without initial access telemetry maps to INSIDER_DATA_ACCESS."""
+        filepath = os.path.join(DATA_DIR, "data_exfiltration.csv")
+        parse_res = parse_log_file(filepath)
+        engine = RuleEngine()
+        detections = engine.detect(parse_res.events)
+        correlator = EventCorrelator()
+        groups = correlator.correlate(detections)
+        detector = IncidentDetector()
+        incidents = detector.detect_incidents(groups)
+        chain = AttackChainReconstructor().reconstruct(incidents[0], events=parse_res.events, detections=detections)
+        candidates = RootCauseAnalyzer().analyze(chain)
+
+        assert len(candidates) >= 1
+        primary = candidates[0]
+        assert primary.is_primary is True
+        assert primary.candidate_type == RootCauseType.INSIDER_DATA_ACCESS.value
+        assert primary.confidence >= 0.80
+        assert len(primary.evidence_event_ids) > 0
+
+    def test_port_scan_reconnaissance_root_cause(self):
+        """Port scan scenario produces informative reconnaissance analysis."""
+        filepath = os.path.join(DATA_DIR, "port_scan.csv")
+        parse_res = parse_log_file(filepath)
+        engine = RuleEngine()
+        detections = engine.detect(parse_res.events)
+        correlator = EventCorrelator()
+        groups = correlator.correlate(detections)
+        detector = IncidentDetector()
+        incidents = detector.detect_incidents(groups)
+        chain = AttackChainReconstructor().reconstruct(incidents[0], events=parse_res.events, detections=detections)
+        candidates = RootCauseAnalyzer().analyze(chain)
+
+        assert len(candidates) >= 1
+        primary = candidates[0]
+        assert primary.is_primary is True
+        assert "reconnaissance" in primary.title.lower() or "reconnaissance" in primary.reasoning.lower()
+        assert len(primary.evidence_event_ids) > 0
+
+    def test_normal_activity_distinguished_from_unknown_root_cause(self):
+        """Normal baseline produces zero incidents; pipeline does not generate fake root cause candidate."""
+        filepath = os.path.join(DATA_DIR, "normal_activity.csv")
+        parse_res = parse_log_file(filepath)
+        engine = RuleEngine()
+        detections = engine.detect(parse_res.events)
+        correlator = EventCorrelator()
+        groups = correlator.correlate(detections)
+        detector = IncidentDetector()
+        incidents = detector.detect_incidents(groups)
+
+        # Baseline produces 0 detections and 0 incidents
+        assert len(detections) == 0
+        assert len(incidents) == 0
+
+        # Contrast with port_scan.csv which HAS an incident and generates an UNKNOWN reconnaissance candidate
+        ps_filepath = os.path.join(DATA_DIR, "port_scan.csv")
+        ps_parse = parse_log_file(ps_filepath)
+        ps_dets = engine.detect(ps_parse.events)
+        ps_groups = correlator.correlate(ps_dets)
+        ps_incidents = detector.detect_incidents(ps_groups)
+
+        assert len(ps_incidents) == 1
+        ps_chain = AttackChainReconstructor().reconstruct(ps_incidents[0], events=ps_parse.events, detections=ps_dets)
+        ps_rc = RootCauseAnalyzer().analyze(ps_chain)
+
+        assert len(ps_rc) == 1
+        assert ps_rc[0].candidate_type == RootCauseType.UNKNOWN.value
+        assert "reconnaissance" in ps_rc[0].title.lower()
+
+

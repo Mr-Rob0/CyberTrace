@@ -451,3 +451,28 @@ class TestSyntheticDatasetDetections:
         for det in detections:
             for eid in det.event_ids:
                 assert eid in all_input_eids, f"Evidence event_id {eid} not in input events"
+
+    def test_privilege_escalation_dataset_detections_breakdown(self):
+        """privilege_escalation.csv contains both privilege escalation and sensitive file reads."""
+        filepath = os.path.join(DATA_DIR, "privilege_escalation.csv")
+        parse_res = parse_log_file(filepath)
+        assert parse_res.failed_rows == 0
+
+        engine = RuleEngine()
+        detections = engine.detect(parse_res.events)
+
+        assert len(detections) == 5, f"Expected 5 detections, got {len(detections)}"
+
+        r004_dets = [d for d in detections if d.rule_id == "R004"]
+        r005_dets = [d for d in detections if d.rule_id == "R005"]
+
+        assert len(r004_dets) == 3, f"Expected 3 R004 detections, got {len(r004_dets)}"
+        assert len(r005_dets) == 2, f"Expected 2 R005 detections, got {len(r005_dets)}"
+
+        # Verify expected event IDs
+        r004_eids = {eid for d in r004_dets for eid in d.event_ids}
+        r005_eids = {eid for d in r005_dets for eid in d.event_ids}
+
+        assert r004_eids == {"PE-4020", "PE-4022", "PE-4023"}
+        assert r005_eids == {"PE-4024", "PE-4027"}
+

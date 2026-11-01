@@ -213,3 +213,19 @@ class TestPlaceholderFunctions:
         assert report is not None
         assert report.incident_id is not None
 
+    def test_render_timeline_implemented(self):
+        """Timeline visualization is implemented and callable."""
+        from visualization.timeline import render_timeline
+
+        assert callable(render_timeline)
+        fig = render_timeline([])
+        assert fig is not None
+
+    def test_render_attack_graph_implemented(self):
+        """Attack graph visualization is implemented and callable."""
+        from visualization.graph import render_attack_graph
+
+        assert callable(render_attack_graph)
+        fig = render_attack_graph(None)
+        assert fig is not None
+

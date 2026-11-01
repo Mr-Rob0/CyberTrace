@@ -31,6 +31,8 @@ from detection.anomaly_detector import detect_anomalies
 from ai.report_generator import generate_report
 from ai.provider import get_configured_provider
 from response import calculate_risk_score, recommend_actions, run_what_if_analysis
+from visualization.graph import render_attack_graph
+from visualization.timeline import render_timeline
 
 # =====================================================================
 # Page Configuration
@@ -39,7 +41,7 @@ st.set_page_config(
     page_title="CyberTrace | Incident Investigation Platform",
     page_icon="🛡️",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 # =====================================================================
@@ -568,6 +570,251 @@ details summary {
     font-size: 1.15rem !important;
     color: #E6EDF3 !important;
 }
+
+/* ── Professional visual refinement ────────────────────────────────
+   A restrained incident-response workspace: layered navy surfaces,
+   clear operational hierarchy, and purposeful cyan rather than a
+   collection of indistinguishable dark cards. */
+:root {
+    --ct-canvas: #080d18;
+    --ct-sidebar: #0b1120;
+    --ct-surface: #101a2c;
+    --ct-surface-raised: #14213a;
+    --ct-border: #243550;
+    --ct-border-subtle: #1b2a43;
+    --ct-text: #e8eef9;
+    --ct-muted: #91a3bf;
+    --ct-faint: #5f7190;
+    --ct-accent: #4cc9f0;
+    --ct-accent-strong: #26a9d1;
+}
+
+.stApp {
+    background:
+        radial-gradient(900px 460px at 82% -180px, rgba(32, 121, 165, 0.14), transparent 68%),
+        var(--ct-canvas) !important;
+    color: var(--ct-text);
+}
+
+.block-container {
+    padding-top: 2.1rem !important;
+    padding-bottom: 2.75rem !important;
+    padding-left: clamp(1.35rem, 3.1vw, 3.25rem) !important;
+    padding-right: clamp(1.35rem, 3.1vw, 3.25rem) !important;
+}
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0c1425 0%, #090f1c 100%) !important;
+    border-right: 1px solid var(--ct-border-subtle) !important;
+    box-shadow: 12px 0 38px rgba(0, 0, 0, 0.12);
+}
+[data-testid="stSidebar"] > div:first-child {
+    padding: 1.2rem 0.8rem 1rem !important;
+}
+
+.sb-brand { align-items: center; gap: 0.5rem; margin: 0.1rem 0 0.25rem; }
+.sb-brand::before {
+    content: "";
+    width: 23px;
+    height: 23px;
+    border-radius: 7px;
+    display: inline-block;
+    flex: 0 0 23px;
+    background: linear-gradient(145deg, #5ee3ff 0%, #2789bd 100%);
+    box-shadow: 0 0 0 4px rgba(76, 201, 240, 0.09), 0 7px 17px rgba(4, 100, 148, 0.28);
+}
+.sb-brand-name { color: #f5f8ff; font-size: 1.12rem; letter-spacing: -0.035em; }
+.sb-brand-ver { color: var(--ct-faint); background: rgba(145, 163, 191, 0.08); padding: 0.12rem 0.32rem; border-radius: 4px; }
+.sb-brand-desc { color: var(--ct-muted); padding-left: 1px; margin-bottom: 1.05rem; }
+.sb-divider { background: var(--ct-border-subtle); margin-bottom: 0.9rem; }
+.sb-section { color: var(--ct-faint); font-size: 0.64rem; letter-spacing: 0.1em; margin: 0.9rem 0 0.45rem; }
+.sb-section-border { border-color: var(--ct-border-subtle); padding-top: 0.9rem; }
+
+[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] label {
+    border-left: 0 !important;
+    border-radius: 7px !important;
+    padding: 0.52rem 0.7rem !important;
+    margin: 0 0 0.16rem !important;
+    min-height: 34px !important;
+}
+[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] label:hover {
+    background: rgba(145, 163, 191, 0.08) !important;
+}
+[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked),
+[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] label:has(input[aria-checked="true"]),
+[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] label:has([aria-checked="true"]) {
+    background: linear-gradient(90deg, rgba(76, 201, 240, 0.18), rgba(76, 201, 240, 0.055)) !important;
+    box-shadow: inset 3px 0 0 var(--ct-accent), 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+}
+[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) p,
+[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] label:has(input[aria-checked="true"]) p,
+[data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] label:has([aria-checked="true"]) p { color: #dff8ff !important; }
+.sb-status { background: rgba(20, 33, 58, 0.72); border-color: var(--ct-border); border-radius: 8px; padding: 0.65rem 0.7rem; color: var(--ct-muted); }
+.sb-status-title { color: var(--ct-faint); }
+
+.pg-header { border-color: var(--ct-border-subtle); padding: 0 0 1.05rem; margin-bottom: 1.45rem; }
+.pg-header h2.pg-title, h2.pg-title, .pg-title { color: #f3f7ff !important; font-size: clamp(1.4rem, 1.8vw, 1.75rem) !important; letter-spacing: -0.035em !important; }
+.pg-subtitle { color: var(--ct-muted); font-size: 0.84rem; margin-top: 0.38rem; }
+.pg-meta { color: var(--ct-faint); }
+
+.sev-badge { border-radius: 999px; padding: 0.23rem 0.52rem; letter-spacing: 0.055em; font-size: 0.64rem; }
+.sev-critical { background: rgba(248, 81, 73, 0.16); border-color: rgba(248, 81, 73, 0.4); }
+.sev-high { background: rgba(255, 183, 77, 0.14); border-color: rgba(255, 183, 77, 0.34); color: #ffc66d; }
+.sev-medium { background: rgba(252, 197, 72, 0.13); border-color: rgba(252, 197, 72, 0.28); color: #f6ca62; }
+.sev-low, .sev-accent { background: rgba(76, 201, 240, 0.12); border-color: rgba(76, 201, 240, 0.3); color: #79ddf6; }
+
+.kpi-row { grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1.45rem; }
+.kpi-cell, .ct-panel, .empty-state, [data-testid="stMetric"] {
+    background: linear-gradient(145deg, rgba(20, 33, 58, 0.96), rgba(14, 25, 44, 0.96)) !important;
+    border-color: var(--ct-border) !important;
+    border-radius: 9px !important;
+    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.11);
+}
+.kpi-cell { padding: 0.82rem 0.88rem; position: relative; overflow: hidden; }
+.kpi-cell::after { content: ""; position: absolute; left: 0.88rem; right: 0.88rem; top: 0; height: 2px; background: linear-gradient(90deg, var(--kpi-accent, var(--ct-accent)), transparent); opacity: 0.82; }
+.kpi-label, [data-testid="stMetric"] label { color: var(--ct-faint) !important; }
+.kpi-val { color: var(--ct-text); font-size: 1.52rem; letter-spacing: -0.035em; }
+.kpi-note { color: var(--ct-muted); }
+
+.sec-title { color: #dce8f8; font-size: 0.76rem; letter-spacing: 0.085em; text-transform: uppercase; margin: 1rem 0 0.62rem; }
+.ct-panel { padding: 1rem 1.05rem; }
+.ct-panel-title { color: var(--ct-text); border-color: var(--ct-border-subtle); }
+.empty-state { padding: 1rem 1.1rem; }
+.empty-state h4 { color: var(--ct-text); }
+.empty-state p { color: var(--ct-muted); }
+.ct-banner { background: rgba(20, 33, 58, 0.8); border-color: var(--ct-border); border-left-color: var(--ct-accent); border-radius: 7px; color: var(--ct-muted); }
+.mv { background: rgba(8, 13, 24, 0.8); border-color: var(--ct-border); color: #abc2df; }
+
+.stButton > button {
+    background: rgba(23, 39, 67, 0.96);
+    color: #cfe8f3;
+    border-color: #345171;
+    border-radius: 7px;
+    padding: 0.42rem 0.82rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.13);
+}
+.stButton > button:hover { background: #1b3556; color: #f1fbff; border-color: var(--ct-accent); transform: translateY(-1px); box-shadow: 0 5px 14px rgba(10, 96, 137, 0.2); }
+.stButton > button:focus-visible, [data-baseweb="tab"] :focus-visible, [data-baseweb="select"] :focus-visible { outline: 2px solid var(--ct-accent) !important; outline-offset: 2px !important; }
+
+div[data-baseweb="select"] > div { background-color: rgba(20, 33, 58, 0.92) !important; border-color: var(--ct-border) !important; color: var(--ct-text) !important; border-radius: 7px !important; }
+.stTabs [data-baseweb="tab-list"] { background: rgba(10, 17, 30, 0.74); border-color: var(--ct-border-subtle); border-radius: 8px; padding: 4px; }
+.stTabs [data-baseweb="tab"] { border-radius: 6px; color: var(--ct-muted); }
+.stTabs [aria-selected="true"] { background: rgba(76, 201, 240, 0.12) !important; color: #b8f0ff !important; border-bottom-color: var(--ct-accent) !important; }
+div[data-testid="stDataFrame"] { background: var(--ct-surface) !important; border-color: var(--ct-border) !important; border-radius: 8px; overflow: hidden; }
+
+/* ── SIEM-style operational navigation ──────────────────────────── */
+div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) {
+    align-items: center !important;
+    margin: 0 0 0.75rem !important;
+    padding: 0.2rem 0.85rem !important;
+    background: linear-gradient(90deg, #0c1425 0%, #101b31 55%, #0c1425 100%);
+    border: 1px solid var(--ct-border-subtle);
+    border-radius: 9px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+.ct-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #f2f7ff;
+    font-size: 0.9rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+.ct-brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgba(101, 222, 248, 0.7);
+    border-radius: 6px;
+    color: #64dcf7;
+    background: rgba(76, 201, 240, 0.1);
+    font-size: 0.9rem;
+}
+div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio"] div[role="radiogroup"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2rem !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio"] label > div > div:first-child {
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio"] label {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0.1rem 0 !important;
+    padding: 0.45rem 0.62rem !important;
+    border-radius: 6px !important;
+    border: 1px solid transparent !important;
+    color: var(--ct-muted) !important;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
+    white-space: nowrap;
+}
+div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio"] label:hover {
+    color: #e8f8fc !important;
+    background: rgba(145, 163, 191, 0.07) !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio"] label:has(input:checked) {
+    color: #eafaff !important;
+    background: rgba(76, 201, 240, 0.13) !important;
+    border-color: rgba(76, 201, 240, 0.3) !important;
+}
+div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio"] label p,
+div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio"] label:has(input:checked) p { color: inherit !important; }
+
+/* Dataset and active-case controls sit underneath the main navigation. */
+[data-testid="stCaptionContainer"] p { color: var(--ct-faint) !important; font-size: 0.61rem !important; font-weight: 700 !important; letter-spacing: 0.09em !important; }
+.ct-control-empty {
+    display: flex;
+    align-items: center;
+    min-height: 38px;
+    box-sizing: border-box;
+    padding: 0 0.7rem;
+    color: var(--ct-faint);
+    font-size: 0.75rem;
+    background: rgba(20, 33, 58, 0.6);
+    border: 1px solid var(--ct-border);
+    border-radius: 7px;
+}
+.ct-status-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.38rem;
+    min-height: 38px;
+    box-sizing: border-box;
+    padding: 0 0.65rem;
+    border: 1px solid var(--ct-border);
+    border-radius: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+}
+.ct-status-chip span { width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 9px currentColor; }
+.ct-status-alert { color: #ffc66d; background: rgba(255, 183, 77, 0.08); }
+.ct-status-alert span { background: #ffc66d; }
+.ct-status-clear { color: #72df9a; background: rgba(63, 185, 80, 0.08); }
+.ct-status-clear span { background: #72df9a; }
+
+@media (max-width: 760px) {
+    .block-container { padding-top: 1.25rem !important; }
+    div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) { padding: 0.35rem 0.55rem !important; }
+    div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio"] label { padding: 0.38rem 0.5rem !important; }
+    .pg-header { align-items: flex-start; gap: 0.65rem; flex-direction: column; }
+    .pg-meta { text-align: left; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 0.55rem; }
+}
 </style>
 """
 
@@ -895,99 +1142,135 @@ def sev_badge(severity: str) -> str:
 def main():
     st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
+    workspace_sections = {
+        "Dashboard": ["Overview"],
+        "Events": ["Telemetry & Logs", "ML Anomaly Detection"],
+        "Investigations": ["Correlated Incidents", "Attack Reconstruction", "MITRE ATT&CK Matrix"],
+        "Response": ["Response Planning"],
+        "Reports": ["AI Investigation Report"],
+    }
+    view_to_section = {
+        view: section
+        for section, views in workspace_sections.items()
+        for view in views
+    }
+
+    def navigate_to(view: str):
+        """Keep the top navigation and the selected operational view in sync."""
+        st.session_state["active_nav_view"] = view
+        st.session_state["workspace_section"] = view_to_section[view]
+
+    def select_workspace_section():
+        navigate_to(workspace_sections[st.session_state["workspace_section"]][0])
+
+    def select_subview(widget_key: str):
+        navigate_to(st.session_state[widget_key])
+
     # Provider status
     active_provider = get_configured_provider()
     is_live_provider = active_provider is not None
 
     # -----------------------------------------------------------------
-    # Sidebar
+    # Operational top bar — analyst controls only (no backend settings)
     # -----------------------------------------------------------------
-    with st.sidebar:
-        # Brand Identity
-        st.markdown("""
-        <div class="sb-brand">
-            <span class="sb-brand-name">CyberTrace</span>
-            <span class="sb-brand-ver">v1.0</span>
-        </div>
-        <div class="sb-brand-desc">Incident Investigation Platform</div>
-        <div class="sb-divider"></div>
-        """, unsafe_allow_html=True)
+    # A browser refresh starts a fresh Streamlit session. Initialise the
+    # dashboard explicitly before any view reads this key.
+    if "active_nav_view" not in st.session_state:
+        st.session_state["active_nav_view"] = "Overview"
+    current_view = st.session_state["active_nav_view"]
+    if current_view not in view_to_section:
+        current_view = "Overview"
+        st.session_state["active_nav_view"] = current_view
+    current_section = view_to_section[current_view]
+    st.session_state["workspace_section"] = current_section
 
-        # Dataset Selector
-        st.markdown('<div class="sb-section">Active Dataset</div>', unsafe_allow_html=True)
-        dataset_files = sorted(glob.glob("data/sample_attacks/*.csv"))
-        if not dataset_files:
-            st.error("No telemetry datasets in data/sample_attacks/")
-            return
+    brand_col, nav_col = st.columns([1.25, 5.75], gap="small")
+    with brand_col:
+        st.markdown('<div class="ct-topbar-brand"><span class="ct-brand-mark">◈</span><span>CYBERTRACE</span></div>', unsafe_allow_html=True)
+    with nav_col:
+        st.radio(
+            "Workspace",
+            list(workspace_sections),
+            horizontal=True,
+            label_visibility="collapsed",
+            key="workspace_section",
+            on_change=select_workspace_section,
+        )
 
-        dataset_options = {os.path.basename(p): p for p in dataset_files}
-        default_idx = list(dataset_options.keys()).index("combined_attack.csv") if "combined_attack.csv" in dataset_options else 0
+    dataset_files = sorted(glob.glob("data/sample_attacks/*.csv"))
+    if not dataset_files:
+        st.error("No telemetry datasets in data/sample_attacks/")
+        return
+
+    dataset_options = {os.path.basename(path): path for path in dataset_files}
+    default_idx = list(dataset_options).index("combined_attack.csv") if "combined_attack.csv" in dataset_options else 0
+    control_spacer, dataset_col, incident_col, status_col = st.columns([1, 2.4, 2.4, 1.5], gap="small")
+    with dataset_col:
+        st.caption("TELEMETRY DATASET")
         selected_dataset_name = st.selectbox(
-            "Select Telemetry Source:",
-            list(dataset_options.keys()),
+            "Select telemetry source",
+            list(dataset_options),
             index=default_idx,
             label_visibility="collapsed",
             key="selected_dataset",
         )
-        selected_path = dataset_options[selected_dataset_name]
+    selected_path = dataset_options[selected_dataset_name]
 
-        # Reset session state on dataset change
-        if "active_dataset_name" not in st.session_state:
-            st.session_state["active_dataset_name"] = selected_dataset_name
-        elif st.session_state["active_dataset_name"] != selected_dataset_name:
-            st.session_state["active_dataset_name"] = selected_dataset_name
-            if "active_incident_report" in st.session_state:
-                del st.session_state["active_incident_report"]
+    # Reset report state when the evidence source changes.
+    if "active_dataset_name" not in st.session_state:
+        st.session_state["active_dataset_name"] = selected_dataset_name
+    elif st.session_state["active_dataset_name"] != selected_dataset_name:
+        st.session_state["active_dataset_name"] = selected_dataset_name
+        st.session_state.pop("active_incident_report", None)
+        st.session_state.pop("active_report_incident_id", None)
 
-        # Run pipeline
-        events, detections, incidents = load_and_process_telemetry(selected_path)
-        events_count = len(events)
-        detections_count = len(detections)
-        incidents_count = len(incidents)
+    events, detections, incidents = load_and_process_telemetry(selected_path)
+    events_count, detections_count, incidents_count = len(events), len(detections), len(incidents)
 
-        status_label = "Threat Correlated" if incidents_count > 0 else "Baseline"
-        status_color = "#D29922" if incidents_count > 0 else "#3FB950"
-        st.markdown(f"""
-        <div style="font-size: 0.7rem; color: #8B949E; margin-top: 0.2rem; margin-bottom: 0.55rem; line-height: 1.35;">
-            {events_count} events • <b style="color: {status_color};">{status_label}</b>
-        </div>
-        """, unsafe_allow_html=True)
+    selected_incident_id = None
+    with incident_col:
+        st.caption("ACTIVE CASE")
+        if incidents:
+            incident_lookup = {incident.incident_id: incident for incident in incidents}
+            selected_incident_id = st.selectbox(
+                "Select active incident",
+                options=list(incident_lookup),
+                format_func=lambda incident_id: f"{incident_id} · {incident_lookup[incident_id].severity.upper()}",
+                key="active_incident_id",
+                label_visibility="collapsed",
+            )
+        else:
+            st.markdown('<div class="ct-control-empty">No open cases</div>', unsafe_allow_html=True)
 
-        # Navigation — grouped with explicit section headers rendered as HTML
-        st.markdown('<div class="sb-section sb-section-border">Workspace</div>', unsafe_allow_html=True)
-        nav_items = [
-            "Overview",
-            "Telemetry & Logs",
-            "Correlated Incidents",
-            "Attack Reconstruction",
-            "MITRE ATT&CK Matrix",
-            "ML Anomaly Detection",
-            "Response Planning",
-            "AI Investigation Report",
-            "Architecture & Settings",
-        ]
+    with status_col:
+        status_label = "INVESTIGATING" if incidents_count else "BASELINE"
+        status_class = "ct-status-alert" if incidents_count else "ct-status-clear"
+        st.caption("ANALYSIS STATUS")
+        st.markdown(f'<div class="ct-status-chip {status_class}"><span></span>{status_label}</div>', unsafe_allow_html=True)
+
+    selected_view = st.session_state["active_nav_view"]
+    section_views = workspace_sections[current_section]
+    if len(section_views) > 1:
+        subview_key = f"{current_section.lower()}_view"
+        st.session_state[subview_key] = selected_view if selected_view in section_views else section_views[0]
         selected_view = st.radio(
-            "Navigation",
-            nav_items,
+            f"{current_section} views",
+            section_views,
+            horizontal=True,
             label_visibility="collapsed",
-            key="active_nav_view",
+            key=subview_key,
+            on_change=select_subview,
+            args=(subview_key,),
         )
-
-        # Pipeline status footer
-        st.markdown(f"""
-        <div class="sb-status">
-            <div class="sb-status-title">Pipeline Status</div>
-            <div>{events_count} events normalized</div>
-            <div>{detections_count} rule detections</div>
-            <div>{incidents_count} incident{'s' if incidents_count != 1 else ''}</div>
-        </div>
-        <div class="sb-footer">CyberTrace • Local Analysis</div>
-        """, unsafe_allow_html=True)
+        st.session_state["active_nav_view"] = selected_view
 
     # -----------------------------------------------------------------
     # Primary Data Pre-computation
     # -----------------------------------------------------------------
-    primary_incident = incidents[0] if incidents else None
+    primary_incident = next(
+        (incident for incident in incidents if incident.incident_id == selected_incident_id),
+        None,
+    ) if selected_incident_id else None
 
     if primary_incident:
         chain, root_causes, mitre_mappings, attack_graph = process_incident_reconstruction(
@@ -1007,50 +1290,69 @@ def main():
     # VIEW 1: OVERVIEW
     # =================================================================
     if selected_view == "Overview":
-        status_badge = sev_badge("HIGH") + ' <span class="sev-badge sev-high">INCIDENT</span>' if primary_incident else '<span class="sev-badge sev-healthy">BASELINE</span>'
+        status_badge = '<span class="sev-badge sev-high">ACTIVE INVESTIGATION</span>' if primary_incident else '<span class="sev-badge sev-healthy">BASELINE HEALTHY</span>'
         render_page_header(
-            "Security Overview",
-            f"Analysis of {selected_dataset_name} — {events_count} events processed through the CyberTrace pipeline.",
+            "Security Operations Dashboard",
+            f"Live analysis workspace for {selected_dataset_name} · {events_count} telemetry events ingested.",
             badge_html=status_badge,
         )
 
-        # KPI Strip — ONLY here
-        det_color = "#D29922" if detections_count > 0 else "#3FB950"
-        inc_color = "#F85149" if incidents_count > 0 else "#3FB950"
+        # Alert-first overview: mirrors how an analyst triages the queue.
+        severity_counts = {severity: 0 for severity in ("critical", "high", "medium", "low")}
+        for detection in detections:
+            severity = getattr(detection, "severity", "low").lower()
+            if severity in severity_counts:
+                severity_counts[severity] += 1
         st.markdown(f"""
         <div class="kpi-row">
-            <div class="kpi-cell">
-                <div class="kpi-label">Events Analyzed</div>
-                <div class="kpi-val">{events_count}</div>
-                <div class="kpi-note">Normalized</div>
+            <div class="kpi-cell" style="--kpi-accent:#f85149;">
+                <div class="kpi-label">Critical Alerts</div>
+                <div class="kpi-val" style="color:#ff8b85;">{severity_counts['critical']}</div>
+                <div class="kpi-note">Immediate review</div>
             </div>
-            <div class="kpi-cell">
-                <div class="kpi-label">Rule Detections</div>
-                <div class="kpi-val" style="color:{det_color};">{detections_count}</div>
-                <div class="kpi-note">Rules R001–R006</div>
+            <div class="kpi-cell" style="--kpi-accent:#ffb74d;">
+                <div class="kpi-label">High Alerts</div>
+                <div class="kpi-val" style="color:#ffc66d;">{severity_counts['high']}</div>
+                <div class="kpi-note">Priority triage</div>
             </div>
-            <div class="kpi-cell">
-                <div class="kpi-label">Correlated Incidents</div>
-                <div class="kpi-val" style="color:{inc_color};">{incidents_count}</div>
-                <div class="kpi-note">Correlated findings</div>
+            <div class="kpi-cell" style="--kpi-accent:#f6ca62;">
+                <div class="kpi-label">Medium Alerts</div>
+                <div class="kpi-val" style="color:#f6ca62;">{severity_counts['medium']}</div>
+                <div class="kpi-note">Monitor and validate</div>
             </div>
-            <div class="kpi-cell">
-                <div class="kpi-label">Attack Stages</div>
-                <div class="kpi-val">{stages_count}</div>
-                <div class="kpi-note">Reconstructed</div>
-            </div>
-            <div class="kpi-cell">
-                <div class="kpi-label">MITRE Techniques</div>
-                <div class="kpi-val">{mitre_count}</div>
-                <div class="kpi-note">Evidence-backed</div>
-            </div>
-            <div class="kpi-cell">
-                <div class="kpi-label">ML Anomalies</div>
-                <div class="kpi-val" style="color:#58A6FF;">{anom_count}</div>
-                <div class="kpi-note">Statistical outliers</div>
+            <div class="kpi-cell" style="--kpi-accent:#72df9a;">
+                <div class="kpi-label">Low Alerts</div>
+                <div class="kpi-val" style="color:#72df9a;">{severity_counts['low']}</div>
+                <div class="kpi-note">Baseline deviations</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        queue_col, distribution_col = st.columns([7, 3], gap="medium")
+        with queue_col:
+            st.markdown('<div class="sec-title">Active Alert Queue</div>', unsafe_allow_html=True)
+            if detections:
+                alert_rows = [
+                    {
+                        "Time": detection.timestamp.strftime("%H:%M:%S"),
+                        "Alert": detection.title,
+                        "Severity": detection.severity,
+                        "Source": detection.source_ip or detection.hostname or "—",
+                        "Status": "Under review",
+                    }
+                    for detection in sorted(detections, key=lambda item: item.timestamp, reverse=True)[:6]
+                ]
+                st.dataframe(
+                    pd.DataFrame(alert_rows),
+                    use_container_width=True,
+                    hide_index=True,
+                    height=230,
+                )
+            else:
+                render_empty_state("No active alerts", "The active dataset has no rule-based detections requiring analyst review.")
+        with distribution_col:
+            st.markdown('<div class="sec-title">Alert Distribution</div>', unsafe_allow_html=True)
+            st.plotly_chart(create_severity_donut(events), use_container_width=True)
 
         # Main content: 60/40 split
         col_left, col_right = st.columns([6, 4])
@@ -1090,17 +1392,20 @@ def main():
 
                 c1, c2, c3 = st.columns(3)
                 with c1:
-                    if st.button("Review Incidents →", key="ov_to_inc", use_container_width=True):
-                        st.session_state["active_nav_view"] = "Correlated Incidents"
-                        st.rerun()
+                    st.button(
+                        "Review Incidents →", key="ov_to_inc", use_container_width=True,
+                        on_click=navigate_to, args=("Correlated Incidents",),
+                    )
                 with c2:
-                    if st.button("Attack Reconstruction →", key="ov_to_recon", use_container_width=True):
-                        st.session_state["active_nav_view"] = "Attack Reconstruction"
-                        st.rerun()
+                    st.button(
+                        "Attack Reconstruction →", key="ov_to_recon", use_container_width=True,
+                        on_click=navigate_to, args=("Attack Reconstruction",),
+                    )
                 with c3:
-                    if st.button("Generate Report →", key="ov_to_rep", use_container_width=True):
-                        st.session_state["active_nav_view"] = "AI Investigation Report"
-                        st.rerun()
+                    st.button(
+                        "Generate Report →", key="ov_to_rep", use_container_width=True,
+                        on_click=navigate_to, args=("AI Investigation Report",),
+                    )
 
         with col_right:
             st.markdown('<div class="sec-title">Detection Summary</div>', unsafe_allow_html=True)
@@ -1135,6 +1440,15 @@ def main():
         )
 
         # Filter toolbar
+        source_options = sorted(list(set(e.source for e in events if getattr(e, "source", None))))
+        sev_options = ["low", "medium", "high", "critical", "info"]
+
+        def reset_telemetry_filters():
+            """Restore the visible telemetry controls as well as their results."""
+            st.session_state["telemetry_search"] = ""
+            st.session_state["source_filter"] = source_options
+            st.session_state["sev_filter"] = sev_options
+
         search_query = st.text_input(
             "Search events (ID, IP, user, message, host):",
             placeholder="e.g. 192.168.1.188, root, failed, sudo...",
@@ -1143,20 +1457,13 @@ def main():
 
         fcol1, fcol2, fcol3 = st.columns([2, 2, 1])
         with fcol1:
-            source_options = sorted(list(set(e.source for e in events if getattr(e, "source", None))))
             selected_sources = st.multiselect("Source:", source_options, default=source_options, key="source_filter")
         with fcol2:
-            sev_options = ["low", "medium", "high", "critical", "info"]
             selected_sevs = st.multiselect("Severity:", sev_options, default=sev_options, key="sev_filter")
         with fcol3:
             st.write("")
             st.write("")
-            clear_filters = st.button("Clear Filters", key="clear_filt_btn")
-
-        if clear_filters:
-            selected_sources = source_options
-            selected_sevs = sev_options
-            search_query = ""
+            st.button("Clear Filters", key="clear_filt_btn", on_click=reset_telemetry_filters)
 
         # Filter logic
         filtered = []
@@ -1192,9 +1499,19 @@ def main():
                     "User": e.username or "—",
                     "Action": e.action or "—",
                 }
-                for e in filtered[:200]
+                for e in filtered
             ]
-            st.dataframe(pd.DataFrame(table_rows), use_container_width=True, height=380)
+            table_df = pd.DataFrame(table_rows)
+            st.download_button(
+                "Download filtered telemetry (CSV)",
+                data=table_df.to_csv(index=False).encode("utf-8"),
+                file_name=f"{os.path.splitext(selected_dataset_name)[0]}_filtered.csv",
+                mime="text/csv",
+                key="download_filtered_telemetry",
+            )
+            if len(table_rows) > 200:
+                st.caption("The table shows the first 200 matching events; the CSV contains all matching events.")
+            st.dataframe(table_df.head(200), use_container_width=True, height=380)
 
             with st.expander("Inspect Raw Event", expanded=False):
                 event_ids = [e.event_id for e in filtered]
@@ -1293,13 +1610,15 @@ def main():
 
             c1, c2 = st.columns(2)
             with c1:
-                if st.button("Reconstruct Attack Chain →", key="inc_to_recon", use_container_width=True):
-                    st.session_state["active_nav_view"] = "Attack Reconstruction"
-                    st.rerun()
+                st.button(
+                    "Reconstruct Attack Chain →", key="inc_to_recon", use_container_width=True,
+                    on_click=navigate_to, args=("Attack Reconstruction",),
+                )
             with c2:
-                if st.button("Generate Investigation Report →", key="inc_to_rep", use_container_width=True):
-                    st.session_state["active_nav_view"] = "AI Investigation Report"
-                    st.rerun()
+                st.button(
+                    "Generate Investigation Report →", key="inc_to_rep", use_container_width=True,
+                    on_click=navigate_to, args=("AI Investigation Report",),
+                )
 
     # =================================================================
     # VIEW 4: ATTACK RECONSTRUCTION
@@ -1370,23 +1689,59 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
 
-            # Graph relationships
-            if attack_graph and attack_graph.edges:
-                with st.expander("Stage Transitions & Causal Graph", expanded=False):
-                    edge_data = [
-                        {
-                            "Source Stage": e.source,
-                            "Relationship": e.relationship.upper(),
-                            "Target Stage": e.target,
-                            "Interpretation": e.description or "Chronological progression",
-                        }
-                        for e in attack_graph.edges
-                    ]
-                    st.dataframe(pd.DataFrame(edge_data), use_container_width=True)
+            # Attack Graph Visualization
+            if attack_graph and attack_graph.nodes:
+                st.markdown('<div class="sec-title" style="margin-top:0.85rem;">Attack Progression Graph</div>', unsafe_allow_html=True)
+                graph_fig = render_attack_graph(attack_graph)
+                st.plotly_chart(graph_fig, use_container_width=True)
 
-            if st.button("Proceed to Investigation Report →", key="recon_to_rep", type="primary"):
-                st.session_state["active_nav_view"] = "AI Investigation Report"
-                st.rerun()
+                if attack_graph.edges:
+                    with st.expander("Stage Transitions & Evidentiary Linkages Table", expanded=False):
+                        edge_data = [
+                            {
+                                "Source Stage": e.source,
+                                "Relationship": e.relationship.upper(),
+                                "Target Stage": e.target,
+                                "Interpretation": e.description or "Chronological progression",
+                            }
+                            for e in attack_graph.edges
+                        ]
+                        st.dataframe(pd.DataFrame(edge_data), use_container_width=True)
+
+            # Probable Root-Cause Analysis
+            if root_causes:
+                st.markdown('<div class="sec-title" style="margin-top:0.85rem;">Probable Root-Cause Candidates</div>', unsafe_allow_html=True)
+                for rc in root_causes:
+                    is_prim = getattr(rc, "is_primary", False)
+                    border_color = "#3FB950" if is_prim else "#30363D"
+                    prim_badge = '<span class="sev-badge sev-healthy" style="margin-left:6px;">PRIMARY CANDIDATE</span>' if is_prim else ""
+                    conf_pct = f"{rc.confidence:.0%}"
+                    st.markdown(f"""
+                    <div class="ct-panel" style="border-left: 3px solid {border_color}; margin-bottom: 0.6rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                            <div>
+                                <span style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#8B949E; font-weight:600;">RANK #{rc.rank}</span>
+                                <span style="margin:0 5px; color:#30363D;">·</span>
+                                <span style="font-weight:600; font-size:0.86rem; color:#E6EDF3;">{rc.title}</span>
+                                {prim_badge}
+                            </div>
+                            <span class="sev-badge sev-accent">CONFIDENCE: {conf_pct}</span>
+                        </div>
+                        <div style="font-size:0.78rem; color:#8B949E; line-height:1.45; margin-bottom:0.4rem;">
+                            <b>Analytical Reasoning:</b> {rc.reasoning}
+                        </div>
+                        <div style="font-size:0.72rem; color:#484F58;">
+                            Type: <span class="mv">{rc.candidate_type}</span> •
+                            Evidence: {' '.join([f'<span class="mv">{eid}</span>' for eid in rc.evidence_event_ids[:8]])}
+                            {' ...' if len(rc.evidence_event_ids) > 8 else ''}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            st.button(
+                "Proceed to Investigation Report →", key="recon_to_rep", type="primary",
+                on_click=navigate_to, args=("AI Investigation Report",),
+            )
 
     # =================================================================
     # VIEW 5: MITRE ATT&CK MATRIX
@@ -1499,7 +1854,11 @@ def main():
             st.caption(f"{action['category'].title()}: {action['rationale']}")
 
         st.markdown('<div class="sec-title" style="margin-top:1rem;">What-if Defense Simulation</div>', unsafe_allow_html=True)
-        defense_options = ["MFA", "Rate Limiting", "Privileged Access Management", "Endpoint Detection", "Network Segmentation", "Egress Filtering"]
+        defense_options = [
+            "MFA", "Rate Limiting", "Privileged Access Management",
+            "Endpoint Detection", "Network Segmentation", "Egress Filtering",
+            "Data Loss Prevention", "Firewall Filtering"
+        ]
         selected_defenses = st.multiselect("Controls assumed active", defense_options, default=["MFA"], key="what_if_defenses")
         simulation = run_what_if_analysis(chain, selected_defenses)
         if simulation["blocked_at"]:
@@ -1546,20 +1905,31 @@ def main():
         with col_act2:
             generate_clicked = st.button("Generate Report", type="primary", key="btn_gen_rep", use_container_width=True)
 
-        if generate_clicked or "active_incident_report" not in st.session_state:
-            with st.spinner("Synthesizing evidence-grounded report..."):
-                rep = generate_report(
-                    incident_or_findings=primary_incident,
-                    events=events,
-                    detections=detections,
-                    attack_chain=chain,
-                    root_causes=root_causes,
-                    mitre_mappings=mitre_mappings,
-                    anomaly_results=ml_results,
-                    provider=active_provider if is_live_provider else None,
-                    force_fallback=(not is_live_provider),
-                )
-                st.session_state["active_incident_report"] = rep
+        # A report is only valid for the incident from which it was generated.
+        # Regenerate automatically if the analyst switches active incident.
+        report_is_stale = (
+            st.session_state.get("active_report_incident_id") != primary_incident.incident_id
+        )
+        if generate_clicked or "active_incident_report" not in st.session_state or report_is_stale:
+            spinner_message = "Updating report for the active incident..." if report_is_stale else "Synthesizing evidence-grounded report..."
+            with st.spinner(spinner_message):
+                try:
+                    rep = generate_report(
+                        incident_or_findings=primary_incident,
+                        events=events,
+                        detections=detections,
+                        attack_chain=chain,
+                        root_causes=root_causes,
+                        mitre_mappings=mitre_mappings,
+                        anomaly_results=ml_results,
+                        provider=active_provider if is_live_provider else None,
+                        force_fallback=(not is_live_provider),
+                    )
+                    st.session_state["active_incident_report"] = rep
+                    st.session_state["active_report_incident_id"] = primary_incident.incident_id
+                except Exception as exc:
+                    st.error(f"Report generation failed: {exc}")
+                    return
 
         rep = st.session_state.get("active_incident_report")
         if rep:
@@ -1686,14 +2056,13 @@ def main():
             meta_right="CyberTrace v1.0",
         )
 
-        st.markdown('<div class="sec-title">Detection Rule Inventory (R001–R006)</div>', unsafe_allow_html=True)
         rules_specs = [
-            {"Rule ID": "R001", "Name": "Brute Force Login Attempt", "Severity": "HIGH", "Trigger": "≥ 5 failed auths within 120s", "MITRE": "T1110.001"},
-            {"Rule ID": "R002", "Name": "Port Scan (Reconnaissance)", "Severity": "MEDIUM", "Trigger": "≥ 10 distinct dest ports in 60s", "MITRE": "T1046"},
-            {"Rule ID": "R003", "Name": "Suspicious Subnet Login", "Severity": "HIGH", "Trigger": "Auth from unverified external IP", "MITRE": "T1078"},
-            {"Rule ID": "R004", "Name": "Privilege Escalation", "Severity": "CRITICAL", "Trigger": "Sudo/su yielding root", "MITRE": "T1548.003"},
-            {"Rule ID": "R005", "Name": "Sensitive File Access", "Severity": "HIGH", "Trigger": "Access to /etc/shadow, SSH keys", "MITRE": "T1552.004"},
-            {"Rule ID": "R006", "Name": "Large Outbound Transfer", "Severity": "CRITICAL", "Trigger": "Outbound stream > threshold", "MITRE": "T1048.002"},
+            {"Rule ID": "R001", "Name": "Brute Force Login Attempt", "Severity": "HIGH", "Trigger": "≥ 5 failed auths within 300s window", "MITRE": "T1110.001"},
+            {"Rule ID": "R002", "Name": "Port Scan (Reconnaissance)", "Severity": "MEDIUM", "Trigger": "≥ 10 distinct dest ports in 120s window", "MITRE": "T1046"},
+            {"Rule ID": "R003", "Name": "Suspicious Subnet Login", "Severity": "MEDIUM", "Trigger": "Successful auth from 10.0.0.x subnet", "MITRE": "T1078"},
+            {"Rule ID": "R004", "Name": "Privilege Escalation", "Severity": "HIGH", "Trigger": "Sudo elevation or root UID transition", "MITRE": "T1548.003"},
+            {"Rule ID": "R005", "Name": "Sensitive File Access", "Severity": "HIGH", "Trigger": "Read/access of sensitive keywords (/etc/shadow, .pem, keys)", "MITRE": "T1552.004 / T1003.008"},
+            {"Rule ID": "R006", "Name": "Large Outbound Transfer", "Severity": "HIGH", "Trigger": "Outbound stream ≥ 100 MB or explicit exfil telemetry", "MITRE": "T1048"},
         ]
         st.dataframe(pd.DataFrame(rules_specs), use_container_width=True)
 

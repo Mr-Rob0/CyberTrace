@@ -20,10 +20,10 @@ def audit_app_ui_flow():
     app.run()
     assert not app.exception, f"Initial app load produced exception: {app.exception}"
     assert app.selectbox(key="selected_dataset").value == "combined_attack.csv"
-    navigation = app.radio(key="active_nav_view")
-    assert "Response Planning" in navigation.options
+    navigation = app.radio(key="workspace_section")
+    assert "Response" in navigation.options
 
-    navigation.set_value("Response Planning").run()
+    navigation.set_value("Response").run()
     assert not app.exception, f"Response Planning produced exception: {app.exception}"
     metric_labels = [metric.label for metric in app.metric]
     assert {"Response Priority", "Risk Level", "Evidence Confidence"}.issubset(metric_labels)
@@ -35,7 +35,6 @@ def audit_app_ui_flow():
     assert any("Earliest potentially disrupted step" in message for message in _messages(app.success))
 
     app.selectbox(key="selected_dataset").set_value("normal_activity.csv").run()
-    app.radio(key="active_nav_view").set_value("Response Planning").run()
     assert not app.exception, f"Benign response state produced exception: {app.exception}"
     assert any("No incident available" in message for message in _messages(app.markdown))
     print("CyberTrace UI release smoke check passed.")

@@ -139,6 +139,25 @@ class RootCauseAnalyzer:
                     ),
                 )
             )
+        elif cred_step:
+            # Standalone or repelled brute force / credential guessing activity
+            ev_ids = list(dict.fromkeys(cred_step.event_ids))
+            user_target = ", ".join(cred_step.usernames) or "account"
+            src_ip = ", ".join(cred_step.source_ips) or "external IP"
+            conf = 0.90 if len(cred_step.event_ids) >= 10 else 0.82
+            candidates.append(
+                RootCauseCandidate(
+                    candidate_type=RootCauseType.CREDENTIAL_COMPROMISE.value,
+                    title="Authentication Brute Force / Password Guessing Campaign",
+                    confidence=conf,
+                    evidence_event_ids=ev_ids,
+                    reasoning=(
+                        f"Observed repeated authentication failures ({len(cred_step.event_ids)} failed attempts) "
+                        f"originating from {src_ip} targeting account '{user_target}'. Log telemetry confirms active "
+                        f"credential guessing/brute-force activity as the primary threat vector."
+                    ),
+                )
+            )
 
         # 2. Evaluate SUSPICIOUS_REMOTE_ACCESS candidate
         if init_step:
@@ -174,7 +193,48 @@ class RootCauseAnalyzer:
                 )
             )
 
-        # 4. Fallback if no specific candidate emerged
+        # 4. Evaluate INSIDER_DATA_ACCESS candidate
+        col_step = stages_present.get(AttackStage.COLLECTION.value)
+        exfil_step = stages_present.get(AttackStage.EXFILTRATION.value)
+        if (col_step or exfil_step) and not (cred_step or init_step):
+            ev_ids = list(dict.fromkeys((col_step.event_ids if col_step else []) + (exfil_step.event_ids if exfil_step else [])))
+            users = ", ".join(list(dict.fromkeys((col_step.usernames if col_step else []) + (exfil_step.usernames if exfil_step else [])))) or "local account"
+            conf = 0.86 if (col_step and exfil_step) else 0.80
+            candidates.append(
+                RootCauseCandidate(
+                    candidate_type=RootCauseType.INSIDER_DATA_ACCESS.value,
+                    title="Probable Local Data Staging and Exfiltration (Compromised Local Access or Insider Vector)",
+                    confidence=conf,
+                    evidence_event_ids=ev_ids,
+                    reasoning=(
+                        f"Observed sensitive file access and/or high-volume outbound data transfer associated with account '{users}' "
+                        f"without external ingress or authentication brute force recorded in available log telemetry. This "
+                        f"indicates local access abuse or an unrecorded prior compromise; it is an analytical hypothesis and "
+                        f"does not constitute definitive proof of intentional insider malice."
+                    ),
+                )
+            )
+
+        # 5. Evaluate DISCOVERY / Network Reconnaissance
+        disc_step = stages_present.get(AttackStage.DISCOVERY.value)
+        if disc_step and not (cred_step or init_step or priv_step or col_step or exfil_step):
+            ev_ids = list(dict.fromkeys(disc_step.event_ids))
+            src_ip = ", ".join(disc_step.source_ips) or "external scanner"
+            candidates.append(
+                RootCauseCandidate(
+                    candidate_type=RootCauseType.UNKNOWN.value,
+                    title="External Network Reconnaissance (No Compromise Observed)",
+                    confidence=0.55,
+                    evidence_event_ids=ev_ids,
+                    reasoning=(
+                        f"Detected systematic port scanning and network service enumeration originating from {src_ip}. "
+                        f"Log telemetry confirms reconnaissance probes; no subsequent authentication breach, privilege "
+                        f"elevation, or data staging was observed in the available log evidence."
+                    ),
+                )
+            )
+
+        # 6. Fallback if no specific candidate emerged
         if not candidates:
             # Check if any step has events
             all_eids = [eid for s in attack_chain.steps for eid in s.event_ids]
