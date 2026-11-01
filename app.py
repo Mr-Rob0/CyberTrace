@@ -1477,7 +1477,13 @@ def main():
         # Timeline / Distribution
         st.markdown('<div class="sec-title" style="margin-top:0.5rem;">Investigation Signals</div>', unsafe_allow_html=True)
         if chain and chain.steps:
-            st.plotly_chart(create_attack_timeline_chart(chain), use_container_width=True)
+            # This is a dashboard summary, not an analyst input control. Keeping it
+            # static prevents accidental drag-to-zoom selections during a demo.
+            st.plotly_chart(
+                create_attack_timeline_chart(chain),
+                use_container_width=True,
+                config={"staticPlot": True, "displayModeBar": False},
+            )
         else:
             tcol1, tcol2 = st.columns(2)
             with tcol1:
