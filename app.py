@@ -10,6 +10,7 @@ detection, and evidence-grounded report generation.
 import os
 import glob
 import json
+import hashlib
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
@@ -837,6 +838,28 @@ def load_and_process_telemetry(dataset_path: str):
     return parsed.events, detections, incidents
 
 
+def save_uploaded_telemetry(uploaded_file) -> str:
+    """Store an uploaded CSV under a content-derived name for this app run.
+
+    The SHA-256 filename makes a repeated Streamlit rerun reuse the same file
+    and prevents an uploaded filename from being used as a filesystem path.
+    """
+    file_bytes = uploaded_file.getvalue()
+    if not file_bytes:
+        raise ValueError("The uploaded CSV is empty.")
+    if len(file_bytes) > 25 * 1024 * 1024:
+        raise ValueError("The uploaded CSV is larger than the 25 MB limit.")
+
+    upload_dir = os.path.join("data", "uploads")
+    os.makedirs(upload_dir, exist_ok=True)
+    file_hash = hashlib.sha256(file_bytes).hexdigest()[:20]
+    saved_path = os.path.join(upload_dir, f"upload_{file_hash}.csv")
+    if not os.path.exists(saved_path):
+        with open(saved_path, "wb") as upload_destination:
+            upload_destination.write(file_bytes)
+    return saved_path
+
+
 @st.cache_data(show_spinner=False)
 def process_incident_reconstruction(dataset_path: str, incident_id: str):
     """
@@ -1204,17 +1227,45 @@ def main():
 
     dataset_options = {os.path.basename(path): path for path in dataset_files}
     default_idx = list(dataset_options).index("combined_attack.csv") if "combined_attack.csv" in dataset_options else 0
-    control_spacer, dataset_col, incident_col, status_col = st.columns([1, 2.4, 2.4, 1.5], gap="small")
-    with dataset_col:
-        st.caption("TELEMETRY DATASET")
-        selected_dataset_name = st.selectbox(
-            "Select telemetry source",
-            list(dataset_options),
-            index=default_idx,
+    control_spacer, source_col, dataset_col, incident_col, status_col = st.columns([0.5, 1.65, 2.8, 2.4, 1.5], gap="small")
+    with source_col:
+        st.caption("DATA SOURCE")
+        source_mode = st.selectbox(
+            "Choose data source",
+            ["Sample data", "Upload CSV"],
             label_visibility="collapsed",
-            key="selected_dataset",
+            key="telemetry_source_mode",
         )
-    selected_path = dataset_options[selected_dataset_name]
+    with dataset_col:
+        if source_mode == "Sample data":
+            st.caption("TELEMETRY DATASET")
+            selected_dataset_name = st.selectbox(
+                "Select telemetry source",
+                list(dataset_options),
+                index=default_idx,
+                label_visibility="collapsed",
+                key="selected_dataset",
+            )
+            selected_path = dataset_options[selected_dataset_name]
+        else:
+            st.caption("UPLOAD SECURITY LOG")
+            uploaded_csv = st.file_uploader(
+                "Upload a CSV security log",
+                type=["csv"],
+                accept_multiple_files=False,
+                label_visibility="collapsed",
+                key="uploaded_telemetry_csv",
+                help="Required columns: timestamp, source, event_type, event_id. Maximum file size: 25 MB.",
+            )
+            if uploaded_csv is None:
+                st.info("Choose a CSV log file to begin analysis.")
+                return
+            try:
+                selected_path = save_uploaded_telemetry(uploaded_csv)
+            except ValueError as upload_error:
+                st.error(str(upload_error))
+                return
+            selected_dataset_name = f"Uploaded · {uploaded_csv.name}"
 
     # Reset report state when the evidence source changes.
     if "active_dataset_name" not in st.session_state:
@@ -1224,7 +1275,12 @@ def main():
         st.session_state.pop("active_incident_report", None)
         st.session_state.pop("active_report_incident_id", None)
 
-    events, detections, incidents = load_and_process_telemetry(selected_path)
+    try:
+        events, detections, incidents = load_and_process_telemetry(selected_path)
+    except (UnicodeDecodeError, ValueError) as ingestion_error:
+        st.error(f"Could not read this CSV: {ingestion_error}")
+        st.caption("Required columns: timestamp, source, event_type, event_id.")
+        return
     events_count, detections_count, incidents_count = len(events), len(detections), len(incidents)
 
     selected_incident_id = None

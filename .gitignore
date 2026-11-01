@@ -47,8 +47,10 @@ htmlcov/
 # Data files (don't commit raw logs to git)
 data/raw/*
 data/processed/*
+data/uploads/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+!data/uploads/.gitkeep
 
 # Sample attack data is OK to commit
 # data/sample_attacks/ is NOT ignored
