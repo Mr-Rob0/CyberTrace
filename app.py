@@ -2,7 +2,7 @@
 CyberTrace - Cyber Incident Investigation and Reconstruction Platform
 =====================================================================
 Enterprise incident investigation workstation.
-Provides deterministic detection (R001-R006), cross-source correlation,
+Provides deterministic detection (R001-R008), cross-source correlation,
 attack-chain reconstruction, MITRE ATT&CK mapping, unsupervised ML anomaly
 detection, and evidence-grounded report generation.
 """
@@ -20,8 +20,14 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # CyberTrace Pipeline Modules
-from preprocessing.log_parser import parse_log_file
-from detection.rule_engine import RuleEngine
+from preprocessing.log_parser import parse_log_file, CSVLogParser, ParseResult
+from preprocessing.column_mapper import detect_column_mapping, CANONICAL_ALIASES
+import importlib
+import detection.rule_engine
+from detection.rule_engine import RuleEngine, DetectionConfig
+if not hasattr(DetectionConfig, "from_dict"):
+    detection.rule_engine = importlib.reload(detection.rule_engine)
+    from detection.rule_engine import RuleEngine, DetectionConfig
 from correlation.event_correlator import EventCorrelator
 from correlation.incident_detector import IncidentDetector
 from reconstruction.attack_chain import AttackChainReconstructor
@@ -805,6 +811,8 @@ div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio
 .ct-status-chip span { width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 9px currentColor; }
 .ct-status-alert { color: #ffc66d; background: rgba(255, 183, 77, 0.08); }
 .ct-status-alert span { background: #ffc66d; }
+.ct-status-warn { color: #f6ca62; background: rgba(252, 197, 72, 0.08); }
+.ct-status-warn span { background: #f6ca62; }
 .ct-status-clear { color: #72df9a; background: rgba(63, 185, 80, 0.08); }
 .ct-status-clear span { background: #72df9a; }
 
@@ -823,19 +831,39 @@ div[data-testid="stHorizontalBlock"]:has(.ct-topbar-brand) [data-testid="stRadio
 # Pipeline Processing & Data Caching
 # =====================================================================
 @st.cache_data(show_spinner=False)
-def load_and_process_telemetry(dataset_path: str):
+def load_and_process_telemetry(dataset_path: str, manual_mapping_json: str = "{}", config_json: str = "{}"):
     """
     Execute deterministic CyberTrace pipeline.
     Preserves all backend logic verbatim.
     """
-    parsed = parse_log_file(dataset_path)
-    rule_engine = RuleEngine()
+    manual_mapping = json.loads(manual_mapping_json) if manual_mapping_json and manual_mapping_json != "{}" else None
+    config_dict = json.loads(config_json) if config_json and config_json != "{}" else None
+    if config_dict and hasattr(DetectionConfig, "from_dict"):
+        config = DetectionConfig.from_dict(config_dict)
+    elif config_dict:
+        valid_fields = getattr(DetectionConfig, "__dataclass_fields__", {})
+        config = DetectionConfig(**{k: v for k, v in config_dict.items() if k in valid_fields})
+    else:
+        config = DetectionConfig()
+    parser = CSVLogParser()
+    parsed = parser.parse_file(dataset_path, manual_mapping=manual_mapping)
+    rule_engine = RuleEngine(config=config)
     detections = rule_engine.detect(parsed.events)
     correlator = EventCorrelator()
     groups = correlator.correlate(detections)
     detector = IncidentDetector()
     incidents = detector.detect_incidents(groups)
     return parsed.events, detections, incidents
+
+
+@st.cache_data(show_spinner=False)
+def get_dataset_parse_result(dataset_path: str, manual_mapping_json: str = "{}") -> ParseResult:
+    """
+    Parse the CSV and return metadata, column mapping, capability notes, and errors.
+    """
+    manual_mapping = json.loads(manual_mapping_json) if manual_mapping_json and manual_mapping_json != "{}" else None
+    parser = CSVLogParser()
+    return parser.parse_file(dataset_path, manual_mapping=manual_mapping)
 
 
 def save_uploaded_telemetry(uploaded_file) -> str:
@@ -861,11 +889,11 @@ def save_uploaded_telemetry(uploaded_file) -> str:
 
 
 @st.cache_data(show_spinner=False)
-def process_incident_reconstruction(dataset_path: str, incident_id: str):
+def process_incident_reconstruction(dataset_path: str, incident_id: str, manual_mapping_json: str = "{}", config_json: str = "{}"):
     """
     Reconstruct attack chain, root causes, MITRE mappings, and graph for an incident.
     """
-    events, detections, incidents = load_and_process_telemetry(dataset_path)
+    events, detections, incidents = load_and_process_telemetry(dataset_path, manual_mapping_json, config_json)
     target_inc = next((i for i in incidents if i.incident_id == incident_id), None)
     if not target_inc:
         return None, None, None, None
@@ -880,11 +908,13 @@ def process_incident_reconstruction(dataset_path: str, incident_id: str):
 
 
 @st.cache_data(show_spinner=False)
-def run_ml_baseline_scoring(dataset_path: str):
+def run_ml_baseline_scoring(dataset_path: str, manual_mapping_json: str = "{}", config_json: str = "{}"):
     """
     Run Isolation Forest anomaly scoring on events.
     """
-    events, _, _ = load_and_process_telemetry(dataset_path)
+    events, _, _ = load_and_process_telemetry(dataset_path, manual_mapping_json, config_json)
+    if not events:
+        return []
     return detect_anomalies(events)
 
 
@@ -900,12 +930,21 @@ PLOTLY_LAYOUT = dict(
 )
 
 
-def create_severity_donut(events: List[Any]):
-    """Severity breakdown donut chart."""
-    sev_counts = {}
-    for e in events:
-        s = getattr(e, "severity", "low").lower()
-        sev_counts[s] = sev_counts.get(s, 0) + 1
+SEVERITY_ORDER = ("critical", "high", "medium", "low", "info")
+
+
+def count_severities(records: List[Any]) -> Dict[str, int]:
+    """Return a stable severity tally for one explicitly scoped data set."""
+    counts = {severity: 0 for severity in SEVERITY_ORDER}
+    for record in records:
+        severity = str(getattr(record, "severity", "low")).lower()
+        counts[severity if severity in counts else "info"] += 1
+    return counts
+
+
+def create_severity_donut(records: List[Any], title: str, record_label: str):
+    """Plot severity only for the supplied records, with its scope shown in the title."""
+    sev_counts = count_severities(records)
 
     color_map = {
         "critical": "#F85149",
@@ -914,9 +953,23 @@ def create_severity_donut(events: List[Any]):
         "low": "#58A6FF",
         "info": "#484F58",
     }
-    labels = list(sev_counts.keys())
-    values = list(sev_counts.values())
+    labels = [severity for severity in SEVERITY_ORDER if sev_counts[severity]]
+    values = [sev_counts[severity] for severity in labels]
     colors = [color_map.get(k, "#484F58") for k in labels]
+
+    if not values:
+        fig = go.Figure()
+        fig.add_annotation(
+            text=f"No {record_label}", showarrow=False,
+            font=dict(family="Inter", size=13, color="#8B949E"),
+        )
+        fig.update_layout(
+            title=dict(text=title, font=dict(size=12, color="#C9D1D9")),
+            showlegend=False,
+            height=220,
+            **PLOTLY_LAYOUT,
+        )
+        return fig
 
     fig = go.Figure(
         data=[
@@ -932,7 +985,7 @@ def create_severity_donut(events: List[Any]):
         ]
     )
     fig.update_layout(
-        title=dict(text="Severity Breakdown", font=dict(size=12, color="#C9D1D9")),
+        title=dict(text=title, font=dict(size=12, color="#C9D1D9")),
         showlegend=False,
         height=220,
         **PLOTLY_LAYOUT,
@@ -974,7 +1027,7 @@ def create_rule_detection_bar(detections: List[Any]):
         ]
     )
     fig.update_layout(
-        title=dict(text="Detections by Rule (R001–R006)", font=dict(size=12, color="#C9D1D9")),
+        title=dict(text="Detections by Rule (R001–R008)", font=dict(size=12, color="#C9D1D9")),
         xaxis=dict(title="Detections", gridcolor="#21262D", zeroline=False),
         yaxis=dict(gridcolor="#21262D", tickfont=dict(size=10, color="#8B949E")),
         height=220,
@@ -1221,12 +1274,9 @@ def main():
         )
 
     dataset_files = sorted(glob.glob("data/sample_attacks/*.csv"))
-    if not dataset_files:
-        st.error("No telemetry datasets in data/sample_attacks/")
-        return
-
-    dataset_options = {os.path.basename(path): path for path in dataset_files}
+    dataset_options = {os.path.basename(path): path for path in dataset_files} if dataset_files else {}
     default_idx = list(dataset_options).index("combined_attack.csv") if "combined_attack.csv" in dataset_options else 0
+
     control_spacer, source_col, dataset_col, incident_col, status_col = st.columns([0.5, 1.65, 2.8, 2.4, 1.5], gap="small")
     with source_col:
         st.caption("DATA SOURCE")
@@ -1238,6 +1288,9 @@ def main():
         )
     with dataset_col:
         if source_mode == "Sample data":
+            if not dataset_options:
+                st.error("No telemetry datasets in data/sample_attacks/")
+                return
             st.caption("TELEMETRY DATASET")
             selected_dataset_name = st.selectbox(
                 "Select telemetry source",
@@ -1255,17 +1308,67 @@ def main():
                 accept_multiple_files=False,
                 label_visibility="collapsed",
                 key="uploaded_telemetry_csv",
-                help="Required columns: timestamp, source, event_type, event_id. Maximum file size: 25 MB.",
+                help="Upload any security log CSV. Columns will be automatically mapped.",
             )
-            if uploaded_csv is None:
-                st.info("Choose a CSV log file to begin analysis.")
-                return
-            try:
-                selected_path = save_uploaded_telemetry(uploaded_csv)
-            except ValueError as upload_error:
-                st.error(str(upload_error))
-                return
-            selected_dataset_name = f"Uploaded · {uploaded_csv.name}"
+            if uploaded_csv is not None:
+                try:
+                    selected_path = save_uploaded_telemetry(uploaded_csv)
+                    selected_dataset_name = f"Uploaded · {uploaded_csv.name}"
+                    st.session_state["uploaded_file_path"] = selected_path
+                    st.session_state["uploaded_file_name"] = uploaded_csv.name
+                except ValueError as upload_error:
+                    st.error(str(upload_error))
+                    return
+            elif "uploaded_file_path" in st.session_state and os.path.exists(st.session_state["uploaded_file_path"]):
+                selected_path = st.session_state["uploaded_file_path"]
+                selected_dataset_name = f"Uploaded · {st.session_state.get('uploaded_file_name', 'custom.csv')}"
+            else:
+                selected_path = None
+                selected_dataset_name = None
+
+    if not selected_path:
+        render_page_header(
+            "Security Log Ingestion & Telemetry Upload",
+            "Upload any security log CSV (firewall, auth, audit, or SIEM export) for automated incident reconstruction.",
+            badge_html='<span class="sev-badge sev-info">READY FOR INGESTION</span>',
+        )
+        st.markdown("""
+        <div class="ct-panel" style="border-left: 3px solid #58A6FF; margin-top: 1rem;">
+            <div style="font-size: 1.05rem; font-weight: 600; color: #E6EDF3; margin-bottom: 0.5rem;">
+                ◈ Dynamic Security Telemetry Ingestion
+            </div>
+            <div style="font-size: 0.88rem; color: #8B949E; line-height: 1.5; margin-bottom: 1rem;">
+                CyberTrace ingests disparate security logs and automatically normalizes timestamps, IP addresses,
+                identity accounts, and actions without requiring hardcoded column formats.
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.8rem; margin-bottom: 1rem;">
+                <div style="background: #161B22; padding: 0.85rem; border-radius: 6px; border: 1px solid #30363D;">
+                    <b style="color: #58A6FF;">Supported Column Conventions (Auto-Mapped):</b>
+                    <ul style="color: #C9D1D9; margin-top: 0.4rem; padding-left: 1.2rem;">
+                        <li><b>Time:</b> <code>timestamp</code>, <code>Time</code>, <code>DateTime</code>, <code>date</code>, <code>event_time</code></li>
+                        <li><b>Source IP:</b> <code>source_ip</code>, <code>SrcAddress</code>, <code>src_ip</code>, <code>client_ip</code></li>
+                        <li><b>Destination IP:</b> <code>destination_ip</code>, <code>DestAddress</code>, <code>dst_ip</code>, <code>target_ip</code></li>
+                        <li><b>User:</b> <code>username</code>, <code>User</code>, <code>account</code>, <code>identity</code></li>
+                        <li><b>Action / Status:</b> <code>action</code>, <code>status</code>, <code>Result</code>, <code>outcome</code></li>
+                        <li><b>Event Type:</b> <code>event_type</code>, <code>type</code>, <code>Activity</code>, <code>event_name</code></li>
+                    </ul>
+                </div>
+                <div style="background: #161B22; padding: 0.85rem; border-radius: 6px; border: 1px solid #30363D;">
+                    <b style="color: #72DF9A;">Automated Resilience Features:</b>
+                    <ul style="color: #C9D1D9; margin-top: 0.4rem; padding-left: 1.2rem;">
+                        <li><b>Missing Event IDs:</b> Automatically assigns sequential IDs (<code>EVT-00001...</code>)</li>
+                        <li><b>Missing Source:</b> Intelligently defaults to standard security log channel</li>
+                        <li><b>Multiple Date Formats:</b> ISO 8601, Epoch, Syslog, and custom datetime formats</li>
+                        <li><b>Manual Mapping Fallback:</b> Override column mappings at any time</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="font-size: 0.82rem; color: #8B949E;">
+                💡 <em>Use the file uploader in the top bar above to select a CSV, or switch to <b>Sample data</b> to evaluate bundled test scenarios.</em>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        return
 
     # Reset report state when the evidence source changes.
     if "active_dataset_name" not in st.session_state:
@@ -1274,13 +1377,28 @@ def main():
         st.session_state["active_dataset_name"] = selected_dataset_name
         st.session_state.pop("active_incident_report", None)
         st.session_state.pop("active_report_incident_id", None)
+        st.session_state.pop("show_baseline_report", None)
+        st.session_state["manual_mapping_json"] = "{}"
+
+    manual_mapping_json = st.session_state.get("manual_mapping_json", "{}")
+    config_dict = {
+        "brute_force_threshold": int(st.session_state.get("cfg_bf_threshold", 5)),
+        "brute_force_window_seconds": int(st.session_state.get("cfg_bf_window", 300)),
+        "brute_force_burst_min_rate_per_minute": float(st.session_state.get("cfg_bf_burst_rate", 0.5)),
+        "user_spray_threshold": int(st.session_state.get("cfg_user_spray_threshold", 3)),
+        "login_after_failures_threshold": int(st.session_state.get("cfg_r007_threshold", 3)),
+        "login_after_failures_window_seconds": int(st.session_state.get("cfg_r007_window", 300)),
+    }
+    config_json = json.dumps(config_dict, sort_keys=True)
 
     try:
-        events, detections, incidents = load_and_process_telemetry(selected_path)
+        parsed_result = get_dataset_parse_result(selected_path, manual_mapping_json)
+        events, detections, incidents = load_and_process_telemetry(selected_path, manual_mapping_json, config_json)
     except (UnicodeDecodeError, ValueError) as ingestion_error:
-        st.error(f"Could not read this CSV: {ingestion_error}")
-        st.caption("Required columns: timestamp, source, event_type, event_id.")
+        st.error(f"Could not read or parse this CSV: {ingestion_error}")
+        st.caption("Please check that the CSV has a header row with a timestamp/time column.")
         return
+
     events_count, detections_count, incidents_count = len(events), len(detections), len(incidents)
 
     selected_incident_id = None
@@ -1299,10 +1417,98 @@ def main():
             st.markdown('<div class="ct-control-empty">No open cases</div>', unsafe_allow_html=True)
 
     with status_col:
-        status_label = "INVESTIGATING" if incidents_count else "BASELINE"
-        status_class = "ct-status-alert" if incidents_count else "ct-status-clear"
+        active_inc = incident_lookup.get(selected_incident_id) if incidents and selected_incident_id else None
+        if active_inc and active_inc.status == "REVIEW":
+            status_label = "UNDER REVIEW"
+            status_class = "ct-status-warn"
+        elif incidents_count:
+            status_label = "INVESTIGATING"
+            status_class = "ct-status-alert"
+        else:
+            status_label = "BASELINE"
+            status_class = "ct-status-clear"
         st.caption("ANALYSIS STATUS")
         st.markdown(f'<div class="ct-status-chip {status_class}"><span></span>{status_label}</div>', unsafe_allow_html=True)
+
+    # -----------------------------------------------------------------
+    # Dataset Telemetry & Schema Inspector
+    # -----------------------------------------------------------------
+    with st.expander(
+        f"📊 Dataset Inspector: {selected_dataset_name} · {parsed_result.total_rows} rows ({parsed_result.file_size_bytes / 1024:.1f} KB) · {len(parsed_result.column_mapping)} columns mapped",
+        expanded=False,
+    ):
+        disp_col1, disp_col2, disp_col3, disp_col4 = st.columns(4)
+        disp_col1.metric("Ingested Records", f"{parsed_result.total_rows}")
+        disp_col2.metric("Valid Events", f"{parsed_result.successful_rows}")
+        disp_col3.metric("Parse Errors", f"{parsed_result.failed_rows}")
+        disp_col4.metric("Mapped Fields", f"{len(parsed_result.column_mapping)}")
+
+        if parsed_result.capability_notes:
+            for note in parsed_result.capability_notes:
+                st.caption(f"ℹ️ {note}")
+
+        tab_preview, tab_schema, tab_manual = st.tabs(["Dataset Preview", "Detected Column Mapping", "Manual Column Override"])
+        with tab_preview:
+            try:
+                sample_df = pd.read_csv(selected_path, nrows=8)
+                st.dataframe(sample_df, use_container_width=True)
+            except Exception:
+                st.caption("Could not load preview table.")
+
+        with tab_schema:
+            mapping_data = [
+                {"Canonical Field": k, "CSV Header": v}
+                for k, v in parsed_result.column_mapping.items()
+            ]
+            st.dataframe(pd.DataFrame(mapping_data), use_container_width=True, hide_index=True)
+            if parsed_result.unmapped_columns:
+                st.caption(f"Preserved unmapped columns: {', '.join(parsed_result.unmapped_columns)}")
+
+        with tab_manual:
+            st.caption("If your dataset uses non-standard column names that were not auto-detected, map them manually below:")
+            try:
+                raw_headers = list(pd.read_csv(selected_path, nrows=0).columns)
+                opt_headers = ["(Not Present / Auto)"] + raw_headers
+                cur_manual = json.loads(manual_mapping_json) if manual_mapping_json else {}
+
+                col_m1, col_m2, col_m3 = st.columns(3)
+                with col_m1:
+                    m_ts = st.selectbox("Timestamp column:", opt_headers, index=opt_headers.index(cur_manual.get("timestamp")) if cur_manual.get("timestamp") in opt_headers else 0, key="man_col_ts")
+                    m_src = st.selectbox("Source column:", opt_headers, index=opt_headers.index(cur_manual.get("source")) if cur_manual.get("source") in opt_headers else 0, key="man_col_src")
+                    m_type = st.selectbox("Event Type column:", opt_headers, index=opt_headers.index(cur_manual.get("event_type")) if cur_manual.get("event_type") in opt_headers else 0, key="man_col_type")
+                    m_eid = st.selectbox("Event ID column:", opt_headers, index=opt_headers.index(cur_manual.get("event_id")) if cur_manual.get("event_id") in opt_headers else 0, key="man_col_eid")
+                with col_m2:
+                    m_sip = st.selectbox("Source IP column:", opt_headers, index=opt_headers.index(cur_manual.get("source_ip")) if cur_manual.get("source_ip") in opt_headers else 0, key="man_col_sip")
+                    m_dip = st.selectbox("Destination IP column:", opt_headers, index=opt_headers.index(cur_manual.get("destination_ip")) if cur_manual.get("destination_ip") in opt_headers else 0, key="man_col_dip")
+                    m_sport = st.selectbox("Source Port column:", opt_headers, index=opt_headers.index(cur_manual.get("source_port")) if cur_manual.get("source_port") in opt_headers else 0, key="man_col_sport")
+                    m_dport = st.selectbox("Destination Port column:", opt_headers, index=opt_headers.index(cur_manual.get("destination_port")) if cur_manual.get("destination_port") in opt_headers else 0, key="man_col_dport")
+                with col_m3:
+                    m_user = st.selectbox("Username column:", opt_headers, index=opt_headers.index(cur_manual.get("username")) if cur_manual.get("username") in opt_headers else 0, key="man_col_user")
+                    m_host = st.selectbox("Hostname column:", opt_headers, index=opt_headers.index(cur_manual.get("hostname")) if cur_manual.get("hostname") in opt_headers else 0, key="man_col_host")
+                    m_act = st.selectbox("Action / Status column:", opt_headers, index=opt_headers.index(cur_manual.get("action")) if cur_manual.get("action") in opt_headers else 0, key="man_col_act")
+                    m_proc = st.selectbox("Process column:", opt_headers, index=opt_headers.index(cur_manual.get("process")) if cur_manual.get("process") in opt_headers else 0, key="man_col_proc")
+
+                btn_col1, btn_col2 = st.columns(2)
+                with btn_col1:
+                    if st.button("Apply Column Overrides", key="btn_apply_manual_cols", use_container_width=True):
+                        new_mapping = {}
+                        for field_name, sel_val in [
+                            ("timestamp", m_ts), ("source", m_src), ("event_type", m_type),
+                            ("event_id", m_eid), ("source_ip", m_sip), ("destination_ip", m_dip),
+                            ("source_port", m_sport), ("destination_port", m_dport),
+                            ("username", m_user), ("hostname", m_host), ("action", m_act),
+                            ("process", m_proc)
+                        ]:
+                            if sel_val and sel_val != "(Not Present / Auto)":
+                                new_mapping[field_name] = sel_val
+                        st.session_state["manual_mapping_json"] = json.dumps(new_mapping)
+                        st.rerun()
+                with btn_col2:
+                    if st.button("Reset to Auto-Detect", key="btn_reset_manual_cols", use_container_width=True):
+                        st.session_state["manual_mapping_json"] = "{}"
+                        st.rerun()
+            except Exception as e:
+                st.caption(f"Manual mapping options unavailable: {e}")
 
     selected_view = st.session_state["active_nav_view"]
     section_views = workspace_sections[current_section]
@@ -1330,7 +1536,7 @@ def main():
 
     if primary_incident:
         chain, root_causes, mitre_mappings, attack_graph = process_incident_reconstruction(
-            selected_path, primary_incident.incident_id
+            selected_path, primary_incident.incident_id, manual_mapping_json, config_json
         )
         stages_count = len(chain.steps) if chain else 0
         mitre_count = len(mitre_mappings) if mitre_mappings else 0
@@ -1339,26 +1545,28 @@ def main():
         stages_count = 0
         mitre_count = 0
 
-    ml_results = run_ml_baseline_scoring(selected_path)
+    ml_results = run_ml_baseline_scoring(selected_path, manual_mapping_json, config_json)
     anom_count = sum(1 for r in ml_results if r.is_anomaly) if ml_results else 0
 
     # =================================================================
     # VIEW 1: OVERVIEW
     # =================================================================
     if selected_view == "Overview":
-        status_badge = '<span class="sev-badge sev-high">ACTIVE INVESTIGATION</span>' if primary_incident else '<span class="sev-badge sev-healthy">BASELINE HEALTHY</span>'
+        if primary_incident and primary_incident.status == "REVIEW":
+            status_badge = '<span class="sev-badge sev-medium">UNDER REVIEW</span>'
+        elif primary_incident:
+            status_badge = '<span class="sev-badge sev-high">ACTIVE INVESTIGATION</span>'
+        else:
+            status_badge = '<span class="sev-badge sev-healthy">BASELINE HEALTHY</span>'
         render_page_header(
             "Security Operations Dashboard",
-            f"Live analysis workspace for {selected_dataset_name} · {events_count} telemetry events ingested.",
+            f"Active dataset: {selected_dataset_name} · {events_count} raw telemetry events · "
+            f"{detections_count} rule alerts · {incidents_count} correlated incident(s).",
             badge_html=status_badge,
         )
 
-        # Alert-first overview: mirrors how an analyst triages the queue.
-        severity_counts = {severity: 0 for severity in ("critical", "high", "medium", "low")}
-        for detection in detections:
-            severity = getattr(detection, "severity", "low").lower()
-            if severity in severity_counts:
-                severity_counts[severity] += 1
+        # These cards and the chart below share the same complete rule-alert set.
+        severity_counts = count_severities(detections)
         st.markdown(f"""
         <div class="kpi-row">
             <div class="kpi-cell" style="--kpi-accent:#f85149;">
@@ -1386,7 +1594,12 @@ def main():
 
         queue_col, distribution_col = st.columns([7, 3], gap="medium")
         with queue_col:
-            st.markdown('<div class="sec-title">Active Alert Queue</div>', unsafe_allow_html=True)
+            queue_limit = 6
+            visible_alert_count = min(detections_count, queue_limit)
+            st.markdown(
+                f'<div class="sec-title">Rule Alert Queue · Latest {visible_alert_count} of {detections_count}</div>',
+                unsafe_allow_html=True,
+            )
             if detections:
                 alert_rows = [
                     {
@@ -1396,7 +1609,7 @@ def main():
                         "Source": detection.source_ip or detection.hostname or "—",
                         "Status": "Under review",
                     }
-                    for detection in sorted(detections, key=lambda item: item.timestamp, reverse=True)[:6]
+                    for detection in sorted(detections, key=lambda item: item.timestamp, reverse=True)[:queue_limit]
                 ]
                 st.dataframe(
                     pd.DataFrame(alert_rows),
@@ -1407,14 +1620,24 @@ def main():
             else:
                 render_empty_state("No active alerts", "The active dataset has no rule-based detections requiring analyst review.")
         with distribution_col:
-            st.markdown('<div class="sec-title">Alert Distribution</div>', unsafe_allow_html=True)
-            st.plotly_chart(create_severity_donut(events), use_container_width=True)
+            st.markdown('<div class="sec-title">Rule Alert Distribution</div>', unsafe_allow_html=True)
+            st.plotly_chart(
+                create_severity_donut(
+                    detections,
+                    title=f"Rule Alert Severity ({detections_count} total)",
+                    record_label="rule alerts",
+                ),
+                use_container_width=True,
+            )
 
         # Main content: 60/40 split
         col_left, col_right = st.columns([6, 4])
 
         with col_left:
-            st.markdown('<div class="sec-title">Incidents Requiring Review</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="sec-title">Selected Incident for Review ({incidents_count} total)</div>',
+                unsafe_allow_html=True,
+            )
             if not incidents:
                 render_empty_state(
                     "No rule-based incidents detected",
@@ -1464,17 +1687,21 @@ def main():
                     )
 
         with col_right:
-            st.markdown('<div class="sec-title">Detection Summary</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="sec-title">Rule Alert Summary ({detections_count} total)</div>',
+                unsafe_allow_html=True,
+            )
             bar_fig = create_rule_detection_bar(detections)
             if bar_fig:
                 st.plotly_chart(bar_fig, use_container_width=True)
             else:
                 render_empty_state(
                     "No rule detections",
-                    f"Rules R001–R006 did not trigger in {selected_dataset_name}."
+                    f"Rules R001–R008 did not trigger in {selected_dataset_name}."
                 )
 
-        # Timeline / Distribution
+        # Timeline / distribution. Telemetry and ML are deliberately labelled as
+        # separate signals so they cannot be mistaken for rule-alert totals.
         st.markdown('<div class="sec-title" style="margin-top:0.5rem;">Investigation Signals</div>', unsafe_allow_html=True)
         if chain and chain.steps:
             # This is a dashboard summary, not an analyst input control. Keeping it
@@ -1487,7 +1714,14 @@ def main():
         else:
             tcol1, tcol2 = st.columns(2)
             with tcol1:
-                st.plotly_chart(create_severity_donut(events), use_container_width=True)
+                st.plotly_chart(
+                    create_severity_donut(
+                        events,
+                        title=f"Raw Telemetry Severity ({events_count} total)",
+                        record_label="telemetry events",
+                    ),
+                    use_container_width=True,
+                )
             with tcol2:
                 st.plotly_chart(create_anomaly_distribution_chart(ml_results), use_container_width=True)
 
@@ -1564,9 +1798,13 @@ def main():
                 for e in filtered
             ]
             table_df = pd.DataFrame(table_rows)
+            # Defend against CSV formula injection (CWE-1236)
+            sanitized_df = table_df.map(
+                lambda val: f"'{val}" if isinstance(val, str) and val and val[0] in ("=", "+", "-", "@", "\t", "\r") else val
+            )
             st.download_button(
                 "Download filtered telemetry (CSV)",
-                data=table_df.to_csv(index=False).encode("utf-8"),
+                data=sanitized_df.to_csv(index=False).encode("utf-8"),
                 file_name=f"{os.path.splitext(selected_dataset_name)[0]}_filtered.csv",
                 mime="text/csv",
                 key="download_filtered_telemetry",
@@ -1735,24 +1973,28 @@ def main():
                         <span class="sev-badge sev-accent">CONF: {step.confidence:.2f}</span>
                     </div>
                     <div style="font-size:0.79rem; color:#8B949E; line-height:1.4; margin-bottom:0.4rem;">{step.description}</div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; background:#0D1117; padding:0.45rem 0.65rem; border-radius:4px; font-size:0.74rem; margin-bottom:0.35rem;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.6rem; background:#0D1117; padding:0.5rem 0.65rem; border-radius:4px; font-size:0.73rem; margin-bottom:0.35rem;">
                         <div>
-                            <span style="color:#484F58; font-weight:600;">OBSERVED EVIDENCE</span><br>
-                            <span style="color:#8B949E;">{step.observed_evidence}</span>
+                            <span style="color:#58A6FF; font-weight:600; font-size:0.7rem; font-family:'JetBrains Mono',monospace;">OBSERVED BEHAVIOUR</span><br>
+                            <span style="color:#C9D1D9;">{getattr(step, 'observed_behavior', step.observed_evidence)}</span>
                         </div>
                         <div>
-                            <span style="color:#484F58; font-weight:600;">ANALYTICAL INTERPRETATION</span><br>
-                            <span style="color:#8B949E;">{step.inference_reason}</span>
+                            <span style="color:#D29922; font-weight:600; font-size:0.7rem; font-family:'JetBrains Mono',monospace;">INFERRED ATTACK TECHNIQUE</span><br>
+                            <span style="color:#C9D1D9;">{getattr(step, 'inferred_technique', step.inference_reason)}</span>
+                        </div>
+                        <div>
+                            <span style="color:#BC8CFF; font-weight:600; font-size:0.7rem; font-family:'JetBrains Mono',monospace;">DATASET GROUND-TRUTH LABEL</span><br>
+                            <span style="color:#8B949E;">{getattr(step, 'dataset_label', 'Unlabelled (none)')}</span>
                         </div>
                     </div>
                     <div style="font-size:0.7rem; color:#484F58;">
-                        Evidence: {' '.join([f'<span class="mv">{eid}</span>' for eid in step.event_ids])}
+                        Evidence: {' '.join([f'<span class="mv">{eid}</span>' for eid in step.event_ids[:10]])}{' ...' if len(step.event_ids) > 10 else ''} ({len(step.event_ids)} total events)
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
 
             # Attack Graph Visualization
-            if attack_graph and attack_graph.nodes:
+            if attack_graph:
                 st.markdown('<div class="sec-title" style="margin-top:0.85rem;">Attack Progression Graph</div>', unsafe_allow_html=True)
                 graph_fig = render_attack_graph(attack_graph)
                 st.plotly_chart(graph_fig, use_container_width=True)
@@ -1769,6 +2011,8 @@ def main():
                             for e in attack_graph.edges
                         ]
                         st.dataframe(pd.DataFrame(edge_data), use_container_width=True)
+                elif attack_graph.nodes:
+                    st.caption("ℹ️ **Single isolated stage reconstructed from telemetry.** No subsequent progression or lateral intrusion stages were observed in this incident.")
 
             # Probable Root-Cause Analysis
             if root_causes:
@@ -1945,10 +2189,74 @@ def main():
 
         if not incidents:
             render_empty_state(
-                "No incident report available",
-                f"No incidents detected in {selected_dataset_name}. "
-                "Switch to combined_attack.csv to inspect an end-to-end investigation report."
+                "No incident escalation detected",
+                f"Zero security incidents were identified in '{selected_dataset_name}'. "
+                f"All {events_count} telemetry records complied with baseline operational policies."
             )
+            st.markdown("---")
+            st.markdown("#### Baseline Telemetry Audit Report")
+            st.caption(
+                "Even when no active threats are detected, you can generate and download an Executive "
+                "Baseline Audit Report summarizing telemetry metrics and ML anomaly observations."
+            )
+            if st.button("Generate Baseline Audit Report", type="secondary", key="btn_gen_base_rep"):
+                st.session_state["show_baseline_report"] = True
+
+            if st.session_state.get("show_baseline_report"):
+                baseline_md = f"""# CyberTrace Baseline Telemetry Audit Report
+**Dataset:** {selected_dataset_name}  
+**Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  
+**Status:** BASELINE HEALTHY (0 Active Incidents)  
+
+## 1. Executive Summary
+An exhaustive multi-source security telemetry audit was performed on `{selected_dataset_name}` encompassing {events_count} normalized events across all monitored hosts and services. No deterministic threat clusters or privilege escalation chains were detected. The operational baseline remains healthy and within normal operating parameters.
+
+## 2. Telemetry Ingestion Metrics
+- **Total Ingested Events:** {events_count}
+- **Deterministic Rule Alerts:** {detections_count}
+- **Correlated Incidents:** 0
+- **ML Statistical Divergences:** {anom_count}
+
+## 3. Machine Learning Anomaly Observations
+Isolation Forest evaluated {events_count} events against baseline behavioral models:
+- {anom_count} event(s) were flagged as statistical outliers exceeding default variance thresholds.
+- None of the flagged statistical outliers correlated into verified multi-stage attack chains.
+
+## 4. Defensive Recommendations
+1. Maintain continuous logging and telemetry ingestion across all endpoints.
+2. Review the {anom_count} statistical outlier(s) in the ML Anomaly Detection tab for ambient noise reduction.
+3. Ensure multi-factor authentication (MFA) remains enforced across all user identities.
+"""
+                st.markdown(baseline_md)
+                col_dl1, col_dl2 = st.columns(2)
+                with col_dl1:
+                    st.download_button(
+                        "Download Baseline Audit Report (Markdown)",
+                        data=baseline_md,
+                        file_name=f"{os.path.splitext(selected_dataset_name)[0]}_baseline_report.md",
+                        mime="text/markdown",
+                        key="dl_baseline_md",
+                        use_container_width=True,
+                    )
+                with col_dl2:
+                    baseline_json = json.dumps({
+                        "dataset_name": selected_dataset_name,
+                        "timestamp": datetime.now().isoformat(),
+                        "status": "BASELINE_HEALTHY",
+                        "total_events": events_count,
+                        "rule_alerts": detections_count,
+                        "incidents_count": 0,
+                        "ml_anomalies_count": anom_count,
+                        "executive_summary": f"Security audit completed for {selected_dataset_name}. Zero deterministic incidents detected.",
+                    }, indent=2)
+                    st.download_button(
+                        "Download Baseline Audit Report (JSON)",
+                        data=baseline_json,
+                        file_name=f"{os.path.splitext(selected_dataset_name)[0]}_baseline_report.json",
+                        mime="application/json",
+                        key="dl_baseline_json",
+                        use_container_width=True,
+                    )
             return
 
         # Fallback disclosure
@@ -2118,13 +2426,85 @@ def main():
             meta_right="CyberTrace v1.0",
         )
 
+        st.markdown('<div class="sec-title">Authentication Threat Detection Settings (Configurable)</div>', unsafe_allow_html=True)
+        st.caption("Configurable thresholds for R001 (Brute Force / Password Spray) and R007 (Post-Failure Login Risk Indicator) to reduce false positives.")
+
+        cfg_c1, cfg_c2, cfg_c3 = st.columns(3)
+        with cfg_c1:
+            st.number_input(
+                "R001 Failure Threshold",
+                min_value=2,
+                max_value=30,
+                value=int(st.session_state.get("cfg_bf_threshold", 5)),
+                step=1,
+                key="cfg_bf_threshold",
+                help="Minimum consecutive failed logins within window to trigger brute-force burst alert."
+            )
+            st.number_input(
+                "R001 Window (seconds)",
+                min_value=30,
+                max_value=1800,
+                value=int(st.session_state.get("cfg_bf_window", 300)),
+                step=30,
+                key="cfg_bf_window",
+                help="Sliding window duration for clustering failed authentication attempts."
+            )
+        with cfg_c2:
+            st.number_input(
+                "R001 Min Burst Rate (attempts/min)",
+                min_value=0.1,
+                max_value=30.0,
+                value=float(st.session_state.get("cfg_bf_burst_rate", 0.5)),
+                step=0.5,
+                key="cfg_bf_burst_rate",
+                help="Minimum attempts per minute to filter out sporadic human typos from automated bursts."
+            )
+            st.number_input(
+                "R001 User Spray Threshold (accounts)",
+                min_value=2,
+                max_value=15,
+                value=int(st.session_state.get("cfg_user_spray_threshold", 3)),
+                step=1,
+                key="cfg_user_spray_threshold",
+                help="Distinct usernames targeted from single IP to trigger horizontal password spray alert."
+            )
+        with cfg_c3:
+            st.number_input(
+                "R007 Prior Failures Threshold",
+                min_value=2,
+                max_value=20,
+                value=int(st.session_state.get("cfg_r007_threshold", 3)),
+                step=1,
+                key="cfg_r007_threshold",
+                help="Minimum prior failures preceding successful login to trigger risk indicator."
+            )
+            st.number_input(
+                "R007 Lookback Window (seconds)",
+                min_value=30,
+                max_value=1800,
+                value=int(st.session_state.get("cfg_r007_window", 300)),
+                step=30,
+                key="cfg_r007_window",
+                help="Window duration before successful authentication to evaluate prior failure burst."
+            )
+
+        st.markdown('<div class="sec-title" style="margin-top:1rem;">Deterministic Detection Rules</div>', unsafe_allow_html=True)
+        bf_th = st.session_state.get("cfg_bf_threshold", 5)
+        bf_win = st.session_state.get("cfg_bf_window", 300)
+        bf_rate = st.session_state.get("cfg_bf_burst_rate", 0.5)
+        spray_th = st.session_state.get("cfg_user_spray_threshold", 3)
+        r007_th = st.session_state.get("cfg_r007_threshold", 3)
+        r007_win = st.session_state.get("cfg_r007_window", 300)
+
         rules_specs = [
-            {"Rule ID": "R001", "Name": "Brute Force Login Attempt", "Severity": "HIGH", "Trigger": "≥ 5 failed auths within 300s window", "MITRE": "T1110.001"},
+            {"Rule ID": "R001", "Name": "Brute Force / Password Spray", "Severity": "HIGH / CRITICAL", "Trigger": f"≥ {bf_th} fails in {bf_win}s (rate ≥ {bf_rate}/min) OR ≥ {spray_th} accounts sprayed", "MITRE": "T1110.001 / T1110.003"},
             {"Rule ID": "R002", "Name": "Port Scan (Reconnaissance)", "Severity": "MEDIUM", "Trigger": "≥ 10 distinct dest ports in 120s window", "MITRE": "T1046"},
             {"Rule ID": "R003", "Name": "Suspicious Subnet Login", "Severity": "MEDIUM", "Trigger": "Successful auth from 10.0.0.x subnet", "MITRE": "T1078"},
             {"Rule ID": "R004", "Name": "Privilege Escalation", "Severity": "HIGH", "Trigger": "Sudo elevation or root UID transition", "MITRE": "T1548.003"},
             {"Rule ID": "R005", "Name": "Sensitive File Access", "Severity": "HIGH", "Trigger": "Read/access of sensitive keywords (/etc/shadow, .pem, keys)", "MITRE": "T1552.004 / T1003.008"},
             {"Rule ID": "R006", "Name": "Large Outbound Transfer", "Severity": "HIGH", "Trigger": "Outbound stream ≥ 100 MB or explicit exfil telemetry", "MITRE": "T1048"},
+            {"Rule ID": "R007", "Name": "Post-Failure Login Risk Indicator", "Severity": "HIGH / CRITICAL", "Trigger": f"Successful auth following ≥ {r007_th} failed auths within {r007_win}s", "MITRE": "T1078"},
+            {"Rule ID": "R008", "Name": "Suspicious Privileged Remote Login", "Severity": "HIGH", "Trigger": "Direct interactive remote authentication to root/admin account", "MITRE": "T1078.003"},
         ]
         st.dataframe(pd.DataFrame(rules_specs), use_container_width=True)
 
@@ -2132,7 +2512,7 @@ def main():
         pipeline_steps = [
             ("01", "Raw Telemetry Ingestion", "Multi-source security logs (Auth, Syslog, Audit, Firewall) ingested with full forensic fidelity.", "INPUT"),
             ("02", "Parsing & Normalization", "Structured attribute extraction (timestamps, IPs, users, hosts, actions) into canonical event models.", "SCHEMA"),
-            ("03", "Detection Engine (R001–R006)", "Stateful detection rules evaluated against normalized events with evidence-event traceability.", "RULES"),
+            ("03", "Detection Engine (R001–R008)", "Stateful detection rules evaluated against normalized events with evidence-event traceability.", "RULES"),
             ("04", "Cross-Source Correlation", "Temporal sliding windows and entity linking across IPs, accounts, hosts to group detections.", "CORRELATION"),
             ("05", "Attack Reconstruction & Root Cause", "Chronological attack stage inference, directed graph edges, and ranked root-cause candidates.", "CAUSAL"),
             ("06", "MITRE ATT&CK Mapping", "Behavioral evidence aligned to Enterprise ATT&CK tactics and techniques with confidence scoring.", "MITRE"),

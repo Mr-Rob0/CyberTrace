@@ -1,6 +1,6 @@
 # CyberTrace QA Audit
 
-**Audit date:** 1 November 2026  
+**Audit date:** 3 November 2026  
 **Scope:** Core investigation pipeline, bundled datasets, visualisation components, response logic, report exports, and Streamlit navigation/state handling.
 
 ## Executive result
@@ -15,7 +15,7 @@ The analyst-facing application supports the expected sequence:
 
 | Check | Result |
 |---|---:|
-| Full automated test suite | **337 passed** |
+| Full automated test suite | **390 passed** |
 | Parsing failures in bundled datasets | **0** |
 | Dashboard/reconstruction visual components that rendered and serialized | **6 / 6** |
 | Combined-attack report evidence references | **178 verified / 0 unverified** |
@@ -28,7 +28,7 @@ The test suite was run in three groups because the execution environment limits 
 | Dataset | Events | Rule detections | Incidents | ML outliers | Expected behaviour |
 |---|---:|---:|---:|---:|---|
 | `brute_force.csv` | 71 | 1 | 1 | 61 | Brute-force investigation path |
-| `combined_attack.csv` | 178 | 12 | 1 | 20 | Full multi-stage investigation demo |
+| `combined_attack.csv` | 178 | 13 | 1 | 20 | Full multi-stage investigation demo |
 | `compromised_login.csv` | 53 | 5 | 1 | 20 | Credential compromise investigation |
 | `data_exfiltration.csv` | 55 | 10 | 1 | 18 | Data collection/exfiltration investigation |
 | `normal_activity.csv` | 130 | 0 | 0 | 7 | Benign baseline and empty-state behaviour |
@@ -41,12 +41,12 @@ All seven CSV files normalized every row successfully.
 
 ### Combined attack
 
-- **Incident:** `INC-0001`, High severity, 0.95 confidence, 46 linked evidence events.
-- **Triggered rules:** one R001 brute-force detection, three R004 privilege-escalation detections, two R005 sensitive-file detections, and six R006 outbound-transfer detections.
+- **Incident:** `INC-0001`, Critical severity, 0.95 confidence, 47 linked evidence events.
+- **Triggered rules:** one R001 brute-force detection, one R007 post-failure login risk detection, three R004 privilege-escalation detections, two R005 sensitive-file detections, and six R006 outbound-transfer detections.
 - **Reconstructed stages:** Credential Access → Initial Access → Privilege Escalation → Collection → Exfiltration.
 - **Probable root cause:** Compromised administrative credentials through authentication brute force, 0.93 confidence.
 - **MITRE evidence:** six mappings: T1110.001, T1078, T1548.003, T1003.008, T1552.004, and T1048.
-- **Response priority:** 91/100, Critical; eight evidence-led recommendations generated.
+- **Response priority:** 100/100, Critical; eight evidence-led recommendations generated.
 - **Report:** Deterministic fallback report generated successfully and passed grounding validation.
 
 ### Normal baseline

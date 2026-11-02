@@ -110,11 +110,30 @@ def render_attack_graph(graph_data: Any) -> go.Figure:
             })
 
     if not nodes_dict:
+        fig.add_annotation(
+            x=0.5,
+            y=0.5,
+            text=(
+                "<b>No Attack Stages Reconstructed</b><br><br>"
+                "<span style='font-size:11px; color:#8B949E;'>"
+                "The current incident telemetry does not support multi-stage attack reconstruction.<br>"
+                "Events may represent isolated baseline telemetry or uncorroborated alerts."
+                "</span>"
+            ),
+            showarrow=False,
+            font=dict(color="#C9D1D9", size=13, family="JetBrains Mono"),
+            align="center",
+            xref="paper",
+            yref="paper",
+        )
         fig.update_layout(
-            title=dict(text="Attack graph contains no stages", font=dict(size=12, color="#8B949E")),
+            title=dict(text="Attack Progression Graph · No Active Stages", font=dict(size=12, color="#8B949E")),
+            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[-1.0, 1.0]),
+            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[-1.0, 1.0]),
             paper_bgcolor="#0D1117",
             plot_bgcolor="#0D1117",
             height=260,
+            margin=dict(l=20, r=20, t=35, b=25),
         )
         return fig
 
@@ -122,6 +141,87 @@ def render_attack_graph(graph_data: Any) -> go.Figure:
     node_order = list(nodes_dict.keys())
     total_nodes = len(node_order)
 
+    # Dedicated handling for single-stage isolated attack graphs
+    if total_nodes == 1:
+        nid = node_order[0]
+        data = nodes_dict[nid]
+        stage = data.get("stage", "OTHER")
+        c = STAGE_COLORS.get(stage, "#58A6FF")
+        conf_val = data.get("confidence")
+        conf_str = f"{float(conf_val):.2f}" if conf_val is not None else "N/A"
+        ev_count = len(data.get("event_ids", []))
+
+        # Main prominent stage marker (single trace)
+        tip = (
+            f"<b>{nid}: {data.get('title')}</b><br>"
+            f"Stage: {stage}<br>"
+            f"Confidence: {conf_str}<br>"
+            f"Supporting Evidence: {ev_count} events<br>"
+            f"Status: Isolated Stage (No downstream progression detected)"
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=[0.0],
+                y=[0.0],
+                mode="markers",
+                marker=dict(
+                    size=42,
+                    color=c,
+                    symbol="circle",
+                    line=dict(color="#F0F6FC", width=3),
+                ),
+                hovertext=[tip],
+                hoverinfo="text",
+                showlegend=False,
+            )
+        )
+
+        # 1. Label above node
+        fig.add_annotation(
+            x=0.0,
+            y=0.22,
+            text=f"<b>{nid}</b> · <span style='color:{c}; font-weight:600;'>{stage}</span>",
+            showarrow=False,
+            font=dict(color="#E6EDF3", size=12, family="JetBrains Mono"),
+            align="center",
+        )
+
+        # 2. Metrics directly below node
+        fig.add_annotation(
+            x=0.0,
+            y=-0.16,
+            text=f"Confidence: <b>{conf_str}</b> · Evidence: <b>{ev_count}</b> events",
+            showarrow=False,
+            font=dict(color="#8B949E", size=10, family="JetBrains Mono"),
+            align="center",
+        )
+
+        # 3. Explanatory pill badge below metrics
+        fig.add_annotation(
+            x=0.0,
+            y=-0.32,
+            text="<b>Isolated Stage</b> · No Downstream Intrusion Progression Observed",
+            showarrow=False,
+            font=dict(color="#C9D1D9", size=9, family="JetBrains Mono"),
+            bgcolor="#161B22",
+            bordercolor="#30363D",
+            borderwidth=1,
+            borderpad=4,
+            align="center",
+        )
+
+        fig.update_layout(
+            title=dict(text=f"Reconstructed Attack Progression Graph · {stage} (Isolated Stage)", font=dict(size=12, color="#C9D1D9")),
+            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[-1.0, 1.0]),
+            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[-0.45, 0.45]),
+            paper_bgcolor="#0D1117",
+            plot_bgcolor="#0D1117",
+            height=260,
+            margin=dict(l=20, r=20, t=35, b=25),
+        )
+        return fig
+
+    # Multi-node progression layout (total_nodes > 1)
     pos: Dict[str, tuple] = {}
     for i, nid in enumerate(node_order):
         # Spaced horizontally from 0 to total_nodes - 1
@@ -232,8 +332,8 @@ def render_attack_graph(graph_data: Any) -> go.Figure:
         )
     )
 
-    x_min = -0.5
-    x_max = max(1.5, total_nodes - 0.5)
+    x_min = -0.6
+    x_max = max(1.4, total_nodes - 0.4)
 
     fig.update_layout(
         title=dict(text="Reconstructed Attack Progression Graph", font=dict(size=12, color="#C9D1D9")),

@@ -358,7 +358,7 @@ Raw alerts and reconstructed attack stages provide forensic visibility, but ente
 
 ### ⚙️ How Mappings Are Generated
 Mappings are derived **strictly through generic behavioral evidence and telemetry attributes**:
-1. **Rule Corroboration:** Detections from verified rules (R001–R006) provide initial behavioral hypotheses.
+1. **Rule Corroboration:** Detections from verified rules (R001–R008) provide initial behavioral hypotheses.
 2. **Behavioral Telemetry Verification:** The mapper evaluates actual log fields (command executions, port distribution, process names, privilege changes, byte volumes) to substantiate the specific technique or sub-technique.
 3. **No Dataset / Entity Bias:** Mappings **never** depend on dataset filenames, specific IP addresses, usernames, or hostnames.
 4. **Conservative Principle:** If evidence is insufficient or ambiguous, no technique is assigned.
@@ -384,7 +384,7 @@ The technique registry and mapper implement the following verified techniques fr
 
 ### 🔬 Phase 7.1 Audit Corrections Summary
 
-The Phase 7.1 corrective patch resolved six semantic audit findings without modifying R001–R006 detection logic, thresholds, or correlation weights:
+The Phase 7.1 corrective patch resolved six semantic audit findings without modifying the then-existing R001–R006 detection logic, thresholds, or correlation weights:
 
 1. **Fix 1 (T1078.003 $\rightarrow$ T1078):** When account locality cannot be determined from telemetry alone, mapper assigns parent technique `T1078` (Valid Accounts) with calibrated confidence (0.80–0.85) and an evidence-based rationale acknowledging locality uncertainty.
 2. **Fix 2 (T1048.002 $\rightarrow$ T1048):** Large outbound transfers are mapped to parent `T1048` (Exfiltration Over Alternative Protocol) only when telemetry corroborates an alternative transfer utility or protocol (e.g. `curl`, `rsync`). Removed hardcoded HTTPS/443 descriptions and unsupported assumptions of asymmetric encryption. Ports and destinations are formatted dynamically. When telemetry proves only raw byte volume without alternative protocol evidence, `T1048` is not forced.
@@ -392,7 +392,7 @@ The Phase 7.1 corrective patch resolved six semantic audit findings without modi
 4. **Fix 4 (T1552.004):** Prevented `authorized_keys` from triggering Private Keys. Genuine private keys (`.pem`, `id_rsa`, `.key`) continue to map correctly with full traceability.
 5. **Fix 5 (T1548.003):** Ordinary sudo executions (e.g. `sudo ls`) without privilege escalation indicators or transitions are rejected and produce no mapping.
 6. **Fix 6 (T1560.001):** Routine backups (e.g., `daily_backup.tar.gz` by `backup_agent`) are filtered out. Genuine staging of sensitive data remains eligible for `T1560.001`.
-   * **Architectural Limitation Note on Event `CA-6131`:** In `combined_attack.csv`, event `CA-6131` (`tar -czvf /tmp/exfil_bundle.tar.gz ...`) is an individual audit log entry with `action="created"` and `severity="medium"`. Under the strict detection rules R001–R006, generic tar creation does not trigger an independent rule detection, and correlation does not group standalone unflagged events outside incident boundaries. Modifying R001–R006 or correlation thresholds was strictly forbidden by scope. Consequently, `CA-6131` is safely omitted from incident-scoped mappings without distorting incident boundaries.
+   * **Architectural Limitation Note on Event `CA-6131`:** In `combined_attack.csv`, event `CA-6131` (`tar -czvf /tmp/exfil_bundle.tar.gz ...`) is an individual audit log entry with `action="created"` and `severity="medium"`. Under the then-existing R001–R006 rules, generic tar creation does not trigger an independent rule detection, and correlation does not group standalone unflagged events outside incident boundaries. Modifying those rule thresholds or correlation thresholds was strictly forbidden by scope. Consequently, `CA-6131` is safely omitted from incident-scoped mappings without distorting incident boundaries.
 
 ### 🔍 Evidence Traceability
 Every mapping guarantees complete backward forensic traceability:
@@ -421,7 +421,7 @@ Confidence represents a deterministic measure of **evidentiary strength**, stric
 ## 🤖 Phase 8 — ML-Based Anomaly Detection
 
 ### 📌 Overview
-In Phase 8, we implemented an unsupervised machine-learning anomaly detection engine ([`detection/anomaly_detector.py`](file:///C:/Users/YoursPookie/.gemini/antigravity-ide/scratch/CyberTrace/detection/anomaly_detector.py)) powered by **Isolation Forest** (`scikit-learn`). The detector operates as an independent, supplementary analytical stage alongside deterministic rules R001–R006.
+In Phase 8, we implemented an unsupervised machine-learning anomaly detection engine ([`detection/anomaly_detector.py`](file:///C:/Users/YoursPookie/.gemini/antigravity-ide/scratch/CyberTrace/detection/anomaly_detector.py)) powered by **Isolation Forest** (`scikit-learn`). The detector operates as an independent, supplementary analytical stage alongside deterministic rules R001–R008.
 
 ### 💡 Why It Exists
 Deterministic rules excel at matching predefined threat signatures (such as $\ge 5$ failed logins or `/etc/shadow` access), but adversaries often employ subtle, novel, or living-off-the-land techniques that evade fixed threshold checks. Anomaly detection statistically isolates telemetry that diverges from normal organizational baselines without requiring attack labels.
@@ -527,7 +527,7 @@ Phase 9 integrates an AI-assisted and deterministic incident investigation repor
                       +-----------------------------------+
                       |   Verified Pipeline Findings      |
                       |  - Incidents & Evidence Event IDs |
-                      |  - Rule Detections (R001-R006)    |
+                      |  - Rule Detections (R001-R008)    |
                       |  - Reconstructed Attack Stages    |
                       |  - MITRE ATT&CK Mappings          |
                       |  - ML Anomaly Detections          |
@@ -684,7 +684,7 @@ CyberTrace enforces strict prompt-injection defenses:
 | Domain | Source of Truth | Epistemic Status |
 |---|---|---|
 | **Event IDs & Timestamps** | Log Telemetry | **Observed Fact:** Ground-truth audit trail. |
-| **Rule Detections (R001-R006)** | Deterministic Rules | **Verified Signal:** Exact programmatic signature matches. |
+| **Rule Detections (R001-R008)** | Deterministic Rules | **Verified Signal:** Exact programmatic signature matches. |
 | **ML Anomaly Scores** | Isolation Forest Model | **Statistical Signal:** Distance from baseline; NOT proof of maliciousness. |
 | **Attack Stages & Graph** | Heuristic Reconstructor | **Reconstructed Hypothesis:** Most probable chronological progression. |
 | **Root Cause Candidates** | Evidence Correlator | **Probable Hypothesis:** High-confidence entry point, never 100% absolute truth. |

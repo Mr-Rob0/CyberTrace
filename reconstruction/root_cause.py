@@ -119,9 +119,9 @@ class RootCauseAnalyzer:
         init_step = stages_present.get(AttackStage.INITIAL_ACCESS.value)
         priv_step = stages_present.get(AttackStage.PRIVILEGE_ESCALATION.value)
 
-        if cred_step and (init_step or priv_step):
-            # Strong indication of brute force leading to unauthorized access
-            ev_ids = list(dict.fromkeys(cred_step.event_ids + (init_step.event_ids if init_step else [])))
+        if cred_step and priv_step:
+            # Strong indication of brute force leading to unauthorized access and elevation
+            ev_ids = list(dict.fromkeys(cred_step.event_ids + (init_step.event_ids if init_step else []) + priv_step.event_ids))
             user_target = ", ".join(cred_step.usernames) or "account"
             src_ip = ", ".join(cred_step.source_ips) or "attacker IP"
 
@@ -129,13 +129,33 @@ class RootCauseAnalyzer:
             candidates.append(
                 RootCauseCandidate(
                     candidate_type=RootCauseType.CREDENTIAL_COMPROMISE.value,
-                    title="Compromised Administrative Credentials via Authentication Brute Force",
+                    title="Compromised Administrative Credentials via Authentication Brute Force & Privilege Escalation",
                     confidence=conf,
                     evidence_event_ids=ev_ids,
                     reasoning=(
                         f"Repeated authentication failures ({len(cred_step.event_ids)} failed attempts) "
                         f"targeting account '{user_target}' from {src_ip} immediately preceding successful access "
-                        f"and administrative elevation strongly points to credential compromise as the root entry point."
+                        f"and administrative privilege elevation strongly points to credential compromise as the root entry point."
+                    ),
+                )
+            )
+        elif cred_step and init_step:
+            # Repeated failures followed by login without confirmed privilege elevation
+            ev_ids = list(dict.fromkeys(cred_step.event_ids + init_step.event_ids))
+            user_target = ", ".join(cred_step.usernames) or "account"
+            src_ip = ", ".join(cred_step.source_ips) or "attacker IP"
+
+            conf = 0.85 if len(cred_step.event_ids) >= 10 else 0.78
+            candidates.append(
+                RootCauseCandidate(
+                    candidate_type=RootCauseType.CREDENTIAL_COMPROMISE.value,
+                    title="Suspected Credential Compromise via Authentication Guessing (Unconfirmed Session)",
+                    confidence=conf,
+                    evidence_event_ids=ev_ids,
+                    reasoning=(
+                        f"Repeated authentication failures ({len(cred_step.event_ids)} failed attempts) "
+                        f"targeting account '{user_target}' from {src_ip} followed by successful authentication "
+                        f"suggests possible brute force success, though no subsequent administrative elevation or data access was observed."
                     ),
                 )
             )

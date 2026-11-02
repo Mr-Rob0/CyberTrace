@@ -38,6 +38,15 @@ ATTACK_REGISTRY: Dict[str, Dict[str, Any]] = {
         "tactics": ["Credential Access"],
         "url": "https://attack.mitre.org/techniques/T1110/001/",
     },
+    "T1110.003": {
+        "technique_id": "T1110.003",
+        "technique_name": "Password Spraying",
+        "parent_id": "T1110",
+        "parent_name": "Brute Force",
+        "primary_tactic": "Credential Access",
+        "tactics": ["Credential Access"],
+        "url": "https://attack.mitre.org/techniques/T1110/003/",
+    },
     "T1078": {
         "technique_id": "T1078",
         "technique_name": "Valid Accounts",
@@ -373,7 +382,20 @@ class TechniqueMapper:
         user_str = ", ".join(users) if users else "targeted account"
 
         conf = 0.94 if len(eids) >= 10 else 0.88
-        meta = ATTACK_REGISTRY["T1110.001"]
+        is_spray = any(d.metadata.get("attack_pattern") == "password_spray" for d in r001_dets) or len(users) >= 3
+        tech_id = "T1110.003" if is_spray else "T1110.001"
+        meta = ATTACK_REGISTRY[tech_id]
+
+        if is_spray:
+            rationale = (
+                f"Mapped to T1110.003 because telemetry records {len(eids)} failed authentication attempts "
+                f"across {len(users)} distinct accounts ({user_str}), indicating horizontal password spraying."
+            )
+        else:
+            rationale = (
+                f"Mapped to T1110.001 because telemetry records {len(eids)} consecutive failed authentication "
+                f"attempts targeting account '{user_str}', matching repetitive automated password guessing patterns."
+            )
 
         return TechniqueMapping(
             technique_id=meta["technique_id"],
@@ -381,15 +403,12 @@ class TechniqueMapper:
             tactic=meta["primary_tactic"],
             tactics=meta["tactics"],
             confidence=conf,
-            rationale=(
-                f"Mapped to T1110.001 because telemetry records {len(eids)} consecutive failed authentication "
-                f"attempts targeting account '{user_str}', matching repetitive automated password guessing patterns."
-            ),
+            rationale=rationale,
             supporting_detection_ids=det_ids,
             supporting_event_ids=eids,
             evidence_count=len(eids),
             sub_technique_of=meta["parent_id"],
-            metadata={"target_users": users, "failure_count": len(eids)},
+            metadata={"target_users": users, "failure_count": len(eids), "is_spray": is_spray},
         )
 
     def _map_t1078_valid_accounts(
@@ -401,6 +420,8 @@ class TechniqueMapper:
     ) -> Optional[TechniqueMapping]:
         """Detect behavioral evidence of T1078 (Valid Accounts)."""
         r003_dets = [d for d in detections if d.rule_id == "R003" or "suspicious login" in d.title.lower()]
+        r007_dets = [d for d in detections if d.rule_id == "R007" or "brute-force compromise" in d.title.lower()]
+        r008_dets = [d for d in detections if d.rule_id == "R008" or "privileged login" in d.title.lower()]
 
         # Check chain for INITIAL_ACCESS step
         chain_init_step = None
@@ -417,10 +438,9 @@ class TechniqueMapper:
             eids.extend(chain_init_step.event_ids)
             det_ids.extend(chain_init_step.detection_ids)
 
-        if r003_dets:
-            for d in r003_dets:
-                det_ids.append(d.detection_id)
-                eids.extend(d.event_ids)
+        for d in (r003_dets + r007_dets + r008_dets):
+            det_ids.append(d.detection_id)
+            eids.extend(d.event_ids)
 
         # If not already found, look for successful login directly in events
         if not eids:

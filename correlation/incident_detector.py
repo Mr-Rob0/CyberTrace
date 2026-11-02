@@ -96,13 +96,37 @@ class IncidentDetector:
     @staticmethod
     def derive_severity(detections: List[Detection]) -> str:
         """
-        Derive incident severity deterministically:
-            - Any CRITICAL detection -> CRITICAL
-            - Any HIGH detection (or multiple HIGH) -> HIGH
-            - Any MEDIUM detection -> MEDIUM
-            - Otherwise -> LOW
+        Derive incident severity deterministically from supporting detections and evidence:
+            - Confirmed multi-stage attack with post-access findings or massive volume -> CRITICAL
+            - High-volume / spray attacks or confirmed unauthorized activity -> HIGH
+            - Low-to-moderate uncorroborated authentication anomalies -> MEDIUM
+            - Low-volume / isolated anomalies -> LOW
         """
         severities = [d.severity.upper() for d in detections]
+        rule_ids = {d.rule_id for d in detections}
+
+        # Check if exclusively authentication failure / risk indicator activity
+        is_pure_auth = rule_ids.issubset({"R001", "R007"})
+        is_spray = any(d.metadata.get("attack_pattern") == "password_spray" for d in detections)
+        max_failures = 0
+        for d in detections:
+            max_failures = max(
+                max_failures,
+                d.metadata.get("failure_count", 0),
+                d.metadata.get("prior_failure_count", 0)
+            )
+
+        if is_pure_auth and max_failures > 0:
+            # Evidence-based severity for standalone authentication telemetry:
+            # Without post-compromise activity, small failure counts cannot be CRITICAL.
+            if max_failures >= 20:
+                return "CRITICAL"
+            elif is_spray or max_failures >= 10 or ("HIGH" in severities and max_failures >= 8):
+                return "HIGH"
+            elif max_failures >= 4 or "MEDIUM" in severities:
+                return "MEDIUM"
+            return "LOW"
+
         if "CRITICAL" in severities:
             return "CRITICAL"
         if "HIGH" in severities:
@@ -116,17 +140,22 @@ class IncidentDetector:
         """
         Compute aggregate confidence in the incident's correlation:
         Reflects detection quantity and condition strength (never 1.0 certainty).
+        Accurately communicates uncertainty when findings are uncorroborated.
         """
         if not detections:
             return 0.0
 
-        # Mean detection confidence
         avg_det_conf = sum(d.confidence for d in detections) / len(detections)
+        rule_ids = {d.rule_id for d in detections}
 
-        # Multi-detection reinforcement bonus
-        bonus = min(0.02 * (len(detections) - 1), 0.10)
+        if rule_ids.issubset({"R001", "R007"}):
+            # Uncorroborated authentication findings have inherent uncertainty
+            total_conf = min(avg_det_conf, 0.75)
+        else:
+            # Multi-stage correlation reinforcement bonus
+            bonus = min(0.02 * (len(detections) - 1), 0.10)
+            total_conf = min(avg_det_conf + bonus, 0.95)
 
-        total_conf = min(avg_det_conf + bonus, 0.95)
         return round(total_conf, 4)
 
     def create_incident(self, detection_group: List[Detection]) -> Incident:
@@ -162,17 +191,57 @@ class IncidentDetector:
         severity = self.derive_severity(sorted_dets)
         confidence = self.calculate_confidence(sorted_dets)
 
-        # Approximate average pairwise correlation score or default
-        corr_score = 0.85 if len(sorted_dets) > 1 else 0.70
+        # Calculate average pairwise correlation score or sensible single-detection baseline
+        if len(sorted_dets) > 1:
+            try:
+                from correlation.event_correlator import EventCorrelator
+                correlator = EventCorrelator()
+                pair_scores = [
+                    correlator.calculate_pair_score(sorted_dets[i], sorted_dets[j])
+                    for i in range(len(sorted_dets))
+                    for j in range(i + 1, len(sorted_dets))
+                ]
+                corr_score = round(sum(pair_scores) / len(pair_scores), 2) if pair_scores else 0.85
+            except Exception:
+                corr_score = 0.85
+        else:
+            corr_score = 0.70
 
-        # Generate a descriptive summary
+        # Check for unconfirmed authentication activity vs confirmed post-access activity
+        rule_ids = {d.rule_id for d in sorted_dets}
+        is_pure_auth = rule_ids.issubset({"R001", "R007"})
+        has_post_access = any(r in {"R003", "R004", "R005", "R006", "R008"} for r in rule_ids)
+
+        status = "REVIEW" if (is_pure_auth and not has_post_access and severity in {"LOW", "MEDIUM"}) else "OPEN"
+
+        # Generate a descriptive summary communicating uncertainty
         rule_names = list(dict.fromkeys(d.rule_name for d in sorted_dets))
         rules_str = ", ".join(rule_names[:3]) + (f" (+{len(rule_names)-3} more)" if len(rule_names) > 3 else "")
-        summary = (
-            f"Correlated {len(sorted_dets)} detection(s) [{rules_str}] involving "
-            f"user(s): {', '.join(usernames) or 'N/A'}, host(s): {', '.join(hostnames) or 'N/A'}, "
-            f"spanning {len(event_ids)} evidence log event(s)."
-        )
+        user_str = ", ".join(usernames) if usernames else "unknown user"
+        host_str = ", ".join(hostnames) if hostnames else "unknown host"
+
+        if is_pure_auth and not has_post_access:
+            if "R007" in rule_ids:
+                auth_activity = (
+                    "repeated failed authentication followed by login; "
+                    "account compromise unconfirmed pending analyst review of post-login session telemetry."
+                )
+            else:
+                auth_activity = (
+                    "repeated failed authentication attempts (password guessing / brute force); "
+                    "account compromise unconfirmed as no subsequent successful login was observed."
+                )
+            summary = (
+                f"Correlated {len(sorted_dets)} authentication detection(s) [{rules_str}] involving "
+                f"user '{user_str}' from {', '.join(source_ips) or 'unknown source'}. "
+                f"Activity indicates {auth_activity}"
+            )
+        else:
+            summary = (
+                f"Correlated {len(sorted_dets)} detection(s) [{rules_str}] involving "
+                f"user(s): {user_str}, host(s): {host_str}, "
+                f"spanning {len(event_ids)} evidence log event(s)."
+            )
 
         return Incident(
             incident_id=self._next_incident_id(),
@@ -180,7 +249,7 @@ class IncidentDetector:
             start_time=start_time,
             end_time=end_time,
             severity=severity,
-            status="OPEN",
+            status=status,
             confidence=confidence,
             detection_ids=detection_ids,
             event_ids=event_ids,

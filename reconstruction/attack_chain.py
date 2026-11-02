@@ -88,6 +88,9 @@ class AttackStep:
     evidence_summary: str
     observed_evidence: str
     inference_reason: str
+    observed_behavior: str = ""
+    inferred_technique: str = ""
+    dataset_label: str = "Unlabelled (none)"
 
     def __post_init__(self):
         if not self.step_id:
@@ -100,6 +103,12 @@ class AttackStep:
             raise ValueError("AttackStep must be backed by at least one event_id")
         if self.timestamp_start > self.timestamp_end:
             raise ValueError("timestamp_start cannot be after timestamp_end")
+
+        # Populate new triad fields with backward-compatible defaults if empty
+        if not self.observed_behavior:
+            self.observed_behavior = self.observed_evidence
+        if not self.inferred_technique:
+            self.inferred_technique = self.inference_reason
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert attack step to serializable dictionary."""
@@ -120,6 +129,9 @@ class AttackStep:
             "evidence_summary": self.evidence_summary,
             "observed_evidence": self.observed_evidence,
             "inference_reason": self.inference_reason,
+            "observed_behavior": self.observed_behavior,
+            "inferred_technique": self.inferred_technique,
+            "dataset_label": self.dataset_label,
         }
 
 
@@ -289,6 +301,9 @@ class AttackChainReconstructor:
                     evidence_summary=step.evidence_summary,
                     observed_evidence=step.observed_evidence,
                     inference_reason=step.inference_reason,
+                    observed_behavior=step.observed_behavior,
+                    inferred_technique=step.inferred_technique,
+                    dataset_label=step.dataset_label,
                 )
             )
 
@@ -308,10 +323,25 @@ class AttackChainReconstructor:
         chain_start = min(s.timestamp_start for s in assigned_steps)
         chain_end = max(s.timestamp_end for s in assigned_steps)
         stage_names = " -> ".join(s.stage for s in assigned_steps)
-        summary = (
-            f"Reconstructed {len(assigned_steps)}-stage attack chain ({stage_names}) "
-            f"spanning {len(set(eid for s in assigned_steps for eid in s.event_ids))} distinct evidence events "
-            f"with overall confidence of {overall_conf:.2f}."
+        if len(assigned_steps) == 1:
+            summary = (
+                f"Reconstructed single-stage activity ({stage_names}) "
+                f"spanning {len(set(eid for s in assigned_steps for eid in s.event_ids))} distinct evidence events "
+                f"with evidence support score of {overall_conf:.2f}. "
+                f"No subsequent intrusion progression observed."
+            )
+        else:
+            summary = (
+                f"Reconstructed {len(assigned_steps)}-stage attack chain ({stage_names}) "
+                f"spanning {len(set(eid for s in assigned_steps for eid in s.event_ids))} distinct evidence events "
+                f"with overall confidence of {overall_conf:.2f}."
+            )
+
+        limitations = (
+            "Attack reconstruction represents evidence-backed behavioral inference rather than "
+            "ground-truth certainty. Unlabelled dataset records (e.g. mitre_attack_tactics = none) "
+            "indicate observed network behavior that has not been confirmed as malicious by ground-truth labels. "
+            "Single-stage reconnaissance does not establish host compromise or data impact without corroborating telemetry."
         )
 
         return AttackChain(
@@ -321,12 +351,46 @@ class AttackChainReconstructor:
             end_time=chain_end,
             overall_confidence=overall_conf,
             summary=summary,
-            limitations=DEFAULT_RECONSTRUCTION_LIMITATIONS,
+            limitations=limitations,
         )
 
     # -------------------------------------------------------------------------
     # Inference Helpers
     # -------------------------------------------------------------------------
+
+    @staticmethod
+    def _extract_dataset_label(ev_objs: List[Any]) -> str:
+        """
+        Extract ground-truth tactic or label if recorded in underlying telemetry raw messages.
+        Distinguishes explicitly between:
+            - Unlabelled (none)
+            - Ground truth labeled (e.g. Reconnaissance)
+            - Missing ground truth column
+        """
+        if not ev_objs:
+            return "Unlabelled in dataset (none)"
+
+        tactics: Set[str] = set()
+        has_tactic_field = False
+        import re
+
+        for e in ev_objs:
+            raw = getattr(e, "raw_message", "")
+            if not raw:
+                continue
+            m = re.search(r"(?:mitre_attack_tactics|tactics|attack_tactic|label)=([^\s]+)", raw, re.IGNORECASE)
+            if m:
+                has_tactic_field = True
+                val = m.group(1).strip()
+                if val and val.lower() not in {"none", "null", "nan"}:
+                    tactics.add(val)
+
+        if tactics:
+            return f"Labelled in dataset ({', '.join(sorted(tactics))})"
+        elif has_tactic_field:
+            return "Unlabelled in dataset (mitre_attack_tactics: none)"
+        else:
+            return "Unlabelled (no ground-truth column in dataset)"
 
     def _infer_credential_access(
         self,
@@ -389,6 +453,16 @@ class AttackChainReconstructor:
         user_str = ", ".join(users) if users else "unknown user"
         src_str = ", ".join(src_ips) if src_ips else "external source"
         det_ids = [d.detection_id for d in matching_dets]
+        label_desc = self._extract_dataset_label(ev_objs)
+
+        observed_behavior = (
+            f"Observed {len(eids)} failed authentication attempt(s) targeting account '{user_str}' "
+            f"originating from {src_str}."
+        )
+        inferred_technique = (
+            "T1110 - Brute Force (Credential Access). Repeated authentication failures "
+            "indicative of automated password guessing or credential abuse."
+        )
 
         return AttackStep(
             step_id="STEP-PENDING",
@@ -413,6 +487,9 @@ class AttackChainReconstructor:
                 "A dense burst of failed login attempts targeting an administrative or system account "
                 "is consistent with credential brute-force or dictionary attack behavior."
             ),
+            observed_behavior=observed_behavior,
+            inferred_technique=inferred_technique,
+            dataset_label=label_desc,
         )
 
     def _infer_initial_access(
@@ -444,6 +521,16 @@ class AttackChainReconstructor:
                 user_str = ", ".join(users) if users else "account"
                 src_str = ", ".join(src_ips) if src_ips else "remote source"
                 det_ids = [d.detection_id for d in matching_dets]
+                label_desc = self._extract_dataset_label(ev_objs)
+
+                observed_behavior = (
+                    f"Observed interactive authentication session established for user '{user_str}' "
+                    f"from external IP {src_str}."
+                )
+                inferred_technique = (
+                    "T1078 - Valid Accounts (Initial Access). Remote login originating from untrusted "
+                    "or anomalous network address."
+                )
 
                 return AttackStep(
                     step_id="STEP-PENDING",
@@ -468,15 +555,25 @@ class AttackChainReconstructor:
                         "Direct interactive authentication from an unapproved or anomalous network address "
                         "represents perimeter breach and initial entry into the environment."
                     ),
+                    observed_behavior=observed_behavior,
+                    inferred_technique=inferred_technique,
+                    dataset_label=label_desc,
                 )
 
         # Check for successful login following credential attack
-        # Look for successful login matching attacker IP or compromised user within incident or pool
+        # Prioritize successful logins that are part of the correlated incident evidence
         candidate_success_events = [
-            e for e in (incident_events + all_events)
+            e for e in incident_events
             if getattr(e, "event_type", "") in {"login_success", "session_opened"}
             or (getattr(e, "action", "") == "success" and getattr(e, "process", "") in {"sshd", "login"})
         ]
+        if not candidate_success_events and all_events:
+            # Fallback: check all_events only within the strict incident time window and attacker entity
+            candidate_success_events = [
+                e for e in all_events
+                if getattr(e, "event_type", "") in {"login_success", "session_opened"}
+                or (getattr(e, "action", "") == "success" and getattr(e, "process", "") in {"sshd", "login"})
+            ]
 
         # Check if any success event aligns with incident attacker IP / username
         target_success = None
@@ -501,6 +598,16 @@ class AttackChainReconstructor:
 
             user_str = ", ".join(users)
             src_str = ", ".join(src_ips)
+            label_desc = self._extract_dataset_label([target_success])
+
+            observed_behavior = (
+                f"Observed successful authentication event {target_success.event_id} for user '{user_str}' "
+                f"from source {src_str} chronologically following repeated failed login attempts."
+            )
+            inferred_technique = (
+                "T1078 - Valid Accounts (Initial Access). Successful authentication immediately succeeding "
+                "credential guessing bursts."
+            )
 
             return AttackStep(
                 step_id="STEP-PENDING",
@@ -528,6 +635,9 @@ class AttackChainReconstructor:
                     "A successful authentication originating from the exact same source IP and targeting the same "
                     "account immediately following a brute force burst signifies a successful credential crack and initial entry."
                 ),
+                observed_behavior=observed_behavior,
+                inferred_technique=inferred_technique,
+                dataset_label=label_desc,
             )
 
         return None
@@ -588,12 +698,23 @@ class AttackChainReconstructor:
             confidence = 0.75
 
         det_ids = [d.detection_id for d in matching_dets]
+        label_desc = self._extract_dataset_label(ev_objs)
+        host_str = ', '.join(hosts) or 'host'
+        user_str = ', '.join(users) or 'user'
+        observed_behavior = (
+            f"Observed {len(eids)} privileged execution and transition event(s) "
+            f"by '{user_str}' escalating to superuser (root) privileges on {host_str}."
+        )
+        inferred_technique = (
+            "T1548.003 - Sudo and Sudo Caching (Privilege Escalation). Execution of privileged utility "
+            "commands resulting in privilege elevation."
+        )
 
         return AttackStep(
             step_id="STEP-PENDING",
             stage=AttackStage.PRIVILEGE_ESCALATION.value,
             title="Local Privilege Escalation to Superuser / Root",
-            description=f"Execution of privileged escalation commands and transition to root uid on {', '.join(hosts) or 'host'}.",
+            description=f"Execution of privileged escalation commands and transition to root uid on {host_str}.",
             timestamp_start=t_start,
             timestamp_end=t_end,
             detection_ids=det_ids,
@@ -615,6 +736,9 @@ class AttackChainReconstructor:
                 "Execution of privilege escalation commands via sudo followed by transition from standard "
                 "user identifier to UID 0 (root) indicates compromise of host administrative authority."
             ),
+            observed_behavior=observed_behavior,
+            inferred_technique=inferred_technique,
+            dataset_label=label_desc,
         )
 
     def _infer_discovery(
@@ -652,17 +776,55 @@ class AttackChainReconstructor:
         t_end = max(e.timestamp for e in ev_objs) if ev_objs else incident.end_time
         src_ips = sorted(list({e.source_ip for e in ev_objs if getattr(e, "source_ip", None)})) or incident.source_ips
         dst_ips = sorted(list({e.destination_ip for e in ev_objs if getattr(e, "destination_ip", None)})) or incident.destination_ips
+        dst_ports = sorted(list({e.destination_port for e in ev_objs if getattr(e, "destination_port", None) is not None}))
         users = sorted(list({e.username for e in ev_objs if getattr(e, "username", None)})) or incident.usernames
         hosts = sorted(list({e.hostname for e in ev_objs if getattr(e, "hostname", None)})) or incident.hostnames
 
-        confidence = 0.90 if matching_dets else 0.70
+        label_desc = self._extract_dataset_label(ev_objs)
+        is_unlabelled = "unlabelled" in label_desc.lower() or "none" in label_desc.lower()
+        has_multi_stage_context = len(incident.detection_ids) > 3 and any(
+            d for d in detections if d.rule_id in {"R001", "R003", "R004", "R005", "R006", "R007"}
+        )
+
+        # Recalibrate confidence based on evidence support rather than assuming compromise
+        if not matching_dets:
+            confidence = 0.60
+        elif is_unlabelled and not has_multi_stage_context:
+            # Pure network flow port scan with mitre_attack_tactics=none and no subsequent breach
+            confidence = 0.70
+        elif len(matching_dets) >= 2 or len(eids) >= 20:
+            confidence = 0.85
+        else:
+            confidence = 0.78
+
         det_ids = [d.detection_id for d in matching_dets]
+        src_str = ", ".join(src_ips) if src_ips else "external source"
+        port_summary = f"{len(dst_ports)} distinct port(s)" if dst_ports else "multiple network ports"
+        target_summary = f"destination IP(s) {', '.join(dst_ips)}" if dst_ips else "target network systems"
+
+        observed_behavior = (
+            f"Observed {len(eids)} network flow connection attempt(s) from source IP {src_str} "
+            f"targeting {port_summary} across {target_summary}."
+        )
+        inferred_technique = (
+            "T1046 - Network Service Discovery (Reconnaissance / Discovery). Behavioral pattern of rapid "
+            "sequential probes across diverse ports is consistent with network enumeration."
+        )
+        observed_evidence = (
+            f"{len(eids)} network flow probe event(s) recorded across targeted ports "
+            f"(Event IDs: {', '.join(eids[:8])}{' ...' if len(eids) > 8 else ''})."
+        )
+        inference_reason = (
+            f"Behavioral pattern indicates network service discovery probes. "
+            f"However, telemetry records are {label_desc.lower()} and lack corroborating intrusion stages "
+            f"(no authentication breach, privilege escalation, or data exfiltration observed)."
+        )
 
         return AttackStep(
             step_id="STEP-PENDING",
             stage=AttackStage.DISCOVERY.value,
             title="System & Network Reconnaissance / Discovery",
-            description=f"Host or network enumeration probes observed originating from {', '.join(src_ips) or 'source'}.",
+            description=f"Host or network enumeration probes observed originating from {src_str}.",
             timestamp_start=t_start,
             timestamp_end=t_end,
             detection_ids=det_ids,
@@ -676,11 +838,11 @@ class AttackChainReconstructor:
                 f"Observed {len(eids)} reconnaissance event(s) scanning network ports or probing system configurations. "
                 f"Supported by detection(s): {', '.join(det_ids) or 'flow telemetry'}."
             ),
-            observed_evidence=f"Reconnaissance telemetry events recorded across targeted services (Event IDs: {', '.join(eids)}).",
-            inference_reason=(
-                "Probing multiple ports or running enumeration commands indicates an adversary attempting "
-                "to discover active services and assess internal system structure."
-            ),
+            observed_evidence=observed_evidence,
+            inference_reason=inference_reason,
+            observed_behavior=observed_behavior,
+            inferred_technique=inferred_technique,
+            dataset_label=label_desc,
         )
 
     def _infer_collection(
@@ -722,12 +884,23 @@ class AttackChainReconstructor:
 
         confidence = 0.92 if len(matching_dets) >= 2 or len(eids) >= 2 else 0.85
         det_ids = [d.detection_id for d in matching_dets]
+        label_desc = self._extract_dataset_label(ev_objs)
+        host_str = ', '.join(hosts) or 'host'
+
+        observed_behavior = (
+            f"Observed {len(eids)} filesystem access and archiving event(s) reading sensitive system secrets "
+            f"or staging data files on {host_str}."
+        )
+        inferred_technique = (
+            "T1005 - Data from Local System (Collection). Targeted staging of cryptographic keys, "
+            "password files, and system configuration archives."
+        )
 
         return AttackStep(
             step_id="STEP-PENDING",
             stage=AttackStage.COLLECTION.value,
             title="Sensitive Data & Credential Staging / Collection",
-            description=f"Direct access to sensitive credentials, cryptographic keys, and data files on {', '.join(hosts) or 'host'}.",
+            description=f"Direct access to sensitive credentials, cryptographic keys, and data files on {host_str}.",
             timestamp_start=t_start,
             timestamp_end=t_end,
             detection_ids=det_ids,
@@ -749,6 +922,9 @@ class AttackChainReconstructor:
                 "Targeted retrieval of sensitive credential stores and private keys by an elevated user "
                 "is indicative of data collection and staging for unauthorized extraction."
             ),
+            observed_behavior=observed_behavior,
+            inferred_technique=inferred_technique,
+            dataset_label=label_desc,
         )
 
     def _infer_exfiltration(
@@ -790,12 +966,23 @@ class AttackChainReconstructor:
 
         confidence = 0.95 if len(matching_dets) >= 3 or len(eids) >= 3 else 0.88
         det_ids = [d.detection_id for d in matching_dets]
+        label_desc = self._extract_dataset_label(ev_objs)
+        dst_str = ', '.join(dst_ips) or 'external host'
+
+        observed_behavior = (
+            f"Observed {len(eids)} high-volume outbound network flow stream(s) transmitting "
+            f"megabytes of payload data to remote destination {dst_str}."
+        )
+        inferred_technique = (
+            "T1048 - Exfiltration Over Alternative Protocol (Exfiltration). High-volume egress stream "
+            "directed to external IP address following data collection."
+        )
 
         return AttackStep(
             step_id="STEP-PENDING",
             stage=AttackStage.EXFILTRATION.value,
             title="Unauthorized Outbound Data Exfiltration",
-            description=f"High-volume encrypted outbound transfer streams directed to external destination {', '.join(dst_ips) or 'external host'}.",
+            description=f"High-volume encrypted outbound transfer streams directed to external destination {dst_str}.",
             timestamp_start=t_start,
             timestamp_end=t_end,
             detection_ids=det_ids,
@@ -807,16 +994,19 @@ class AttackChainReconstructor:
             confidence=confidence,
             evidence_summary=(
                 f"Observed {len(eids)} large outbound transfer events moving hundreds of megabytes "
-                f"to destination IP(s) {', '.join(dst_ips)}. Supported by detection(s): {', '.join(det_ids)}."
+                f"to destination IP(s) {dst_str}. Supported by detection(s): {', '.join(det_ids)}."
             ),
             observed_evidence=(
                 f"{len(eids)} high-volume outbound network flow streams recorded through firewall "
-                f"to external IP {', '.join(dst_ips)} (Event IDs: {', '.join(eids)})."
+                f"to external IP {dst_str} (Event IDs: {', '.join(eids)})."
             ),
             inference_reason=(
                 "Repetitive, high-volume egress streams over encrypted channels directed to an external IP "
                 "following data staging strongly indicates completed data exfiltration."
             ),
+            observed_behavior=observed_behavior,
+            inferred_technique=inferred_technique,
+            dataset_label=label_desc,
         )
 
     # -------------------------------------------------------------------------
@@ -829,7 +1019,9 @@ class AttackChainReconstructor:
 
         Formula:
             - Weighted average of step confidences
-            - Diversity bonus (+0.03 per distinct supported stage beyond 1, up to +0.06)
+            - Diversity bonus (+0.02 per distinct supported stage beyond 1, up to +0.06)
+            - Single-stage penalty (-0.05) if an uncorroborated single stage is inferred
+            - Unlabelled dataset penalty (-0.05) if single stage evidence is unlabelled in dataset
             - Chronological consistency check
             - Clamped strictly between 0.0 and 0.98 (never 1.0)
         """
@@ -840,7 +1032,12 @@ class AttackChainReconstructor:
 
         # Multi-stage coherence bonus
         unique_stages = len(set(s.stage for s in steps))
-        coherence_bonus = min(0.06, max(0.0, (unique_stages - 1) * 0.02))
+        if unique_stages > 1:
+            coherence_bonus = min(0.06, max(0.0, (unique_stages - 1) * 0.02))
+            single_stage_penalty = 0.0
+        else:
+            coherence_bonus = 0.0
+            single_stage_penalty = 0.05
 
         # Check chronological consistency
         chrono_penalty = 0.0
@@ -848,7 +1045,13 @@ class AttackChainReconstructor:
             if steps[i].timestamp_start > steps[i + 1].timestamp_start:
                 chrono_penalty += 0.05
 
-        computed = (avg_step_conf * 0.9) + (incident.confidence * 0.1) + coherence_bonus - chrono_penalty
+        any_unlabelled = any(
+            "unlabelled" in getattr(s, "dataset_label", "").lower() or "none" in getattr(s, "dataset_label", "").lower()
+            for s in steps
+        )
+        unlabelled_penalty = 0.05 if (any_unlabelled and unique_stages == 1) else 0.0
+
+        computed = (avg_step_conf * 0.85) + (incident.confidence * 0.15) + coherence_bonus - single_stage_penalty - chrono_penalty - unlabelled_penalty
         return max(0.10, min(0.97, round(computed, 4)))
 
 

@@ -631,11 +631,9 @@ def detect_anomalies(
             new_detector.fit(res.events)
         else:
             # Fall back to self-fitting if large enough, else return empty
-            if len(events) >= 10:
+            if len(events) >= 5:
                 new_detector.fit(events)
             else:
-                raise RuntimeError(
-                    "No baseline training events provided and default normal_activity.csv not found."
-                )
+                return []
 
     return new_detector.predict(events)
